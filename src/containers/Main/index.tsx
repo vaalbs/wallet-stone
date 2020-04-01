@@ -3,8 +3,7 @@ import React from "react";
 import { Footer } from "../../components/Footer";
 import { Header } from "../../components/Header";
 import { SiderMenu } from "../../components/Sider-Menu";
-
-const { Content } = Layout;
+import { ContentWrapper, Line, TabPaneWrapper, TabWrapper } from "./styled";
 
 export const Main = () => {
   const [collapsed, setCollapsed] = React.useState(false);
@@ -17,14 +16,19 @@ export const Main = () => {
       />
       <Layout className="site-layout">
         <Header />
-        <Content>
-          <div
-            className="site-layout-background"
-            style={{ padding: 24, minHeight: 360 }}
-          >
-            Bill is a cat.
-          </div>
-        </Content>
+
+        <ContentWrapper>
+          <TabWrapper defaultActiveKey="1">
+            <TabPaneWrapper tab="Tab 1" key="1">
+              Content of Tab Pane 1
+            </TabPaneWrapper>
+            <TabPaneWrapper tab="Tab 2" key="2">
+              Content of Tab Pane 2
+            </TabPaneWrapper>
+          </TabWrapper>
+          <Line />
+        </ContentWrapper>
+
         <Footer />
       </Layout>
     </Layout>
