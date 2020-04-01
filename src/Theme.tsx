@@ -10,7 +10,8 @@ const theme = {
     primary: "#001e32",
     secondary: "#27e6e7",
     gray: "#99a1a8",
-    white: "#fff"
+    white: "#fff",
+    darkBlue: "#020616"
   }
 };
 
