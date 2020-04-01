@@ -1,9 +1,15 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
+import { Theme } from "./Theme";
+import { Main } from "./containers/Main";
+import "antd/dist/antd.css";
 
-const App: React.FC = () => {
-  return <p>Wallet Store</p>;
+export const App: React.FC = () => {
+  return (
+    <Theme>
+      <Main />
+    </Theme>
+  );
 };
 
 export default App;
