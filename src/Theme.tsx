@@ -9,7 +9,7 @@ const theme = {
   color: {
     primary: "#001e32",
     secondary: "#27e6e7",
-    text: "#99a1a8",
+    gray: "#99a1a8",
     white: "#fff"
   }
 };

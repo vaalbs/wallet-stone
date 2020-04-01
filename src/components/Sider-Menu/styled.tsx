@@ -30,7 +30,7 @@ export const MenuWrapper = styled(Menu)`
 export const MenuItem = styled(Menu.Item)`
   border-left: 2px solid;
   border-left-color: transparent;
-  color: ${props => props.theme.color.text};
+  color: ${props => props.theme.color.gray};
   font-weight: 600;
   padding-top: 4px;
 
