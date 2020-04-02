@@ -11,9 +11,11 @@ const theme = {
     secondary: "#27e6e7",
     gray: "#99a1a8",
     grayLight: "#eaf0f5",
+    grayLight02: "#bec4c9",
     white: "#fff",
     darkBlue: "#020616",
-    purple: "#7c61ce"
+    purple: "#7c61ce",
+    purpleDark: "#431fa8"
   }
 };
 
