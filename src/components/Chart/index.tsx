@@ -1,6 +1,6 @@
 import Chart from "chart.js";
 import React from "react";
-import { TabPaneWrapper } from "../../Styles/Tab/styled";
+import { TabPaneWrapper } from "../../styles/Tab/styled";
 import { ChartWrapper, Tab } from "./styled";
 
 export interface IChart {

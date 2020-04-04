@@ -1,6 +1,6 @@
 import React from "react";
 import { Coins } from "../../components/Coins";
-import { TabPaneWrapper, TabWrapper } from "../../Styles/Tab/styled";
+import { TabPaneWrapper, TabWrapper } from "../../styles/Tab/styled";
 import { ContentWrapper, Line } from "./styled";
 
 export const Wallet = () => {

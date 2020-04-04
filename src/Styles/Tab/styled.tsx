@@ -1,7 +1,6 @@
-import { Layout, Tabs } from "antd";
+import { Tabs } from "antd";
 import styled from "styled-components";
 
-const { Content } = Layout;
 const { TabPane } = Tabs;
 
 export const TabWrapper = styled(Tabs)<{

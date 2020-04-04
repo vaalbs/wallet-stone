@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { TabWrapper } from "../../Styles/Tab/styled";
+import { TabWrapper } from "../../styles/Tab/styled";
 
 export const ChartWrapper = styled.section``;
 
