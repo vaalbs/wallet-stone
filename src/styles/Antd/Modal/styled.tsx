@@ -1,9 +1,5 @@
-import { Alert, Modal } from "antd";
+import { Modal } from "antd";
 import styled from "styled-components";
-
-export const AlertWrapper = styled(Alert)`
-  margin-top: 12px;
-`;
 
 export const ModalWrapper = styled(Modal)`
   border-radius: 6px;

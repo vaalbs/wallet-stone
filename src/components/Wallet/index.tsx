@@ -2,18 +2,9 @@ import React from "react";
 import { TabPaneWrapper, TabWrapper } from "../../styles/Tab/styled";
 import { IChart } from "../Chart";
 import { Coins } from "../Coins";
-import { Form, IFormFields } from "../Form";
+import { Form, IFormModal } from "../Form";
 import { IButtons, IValue } from "../Wallet/Header";
 import { ContentWrapper, Line } from "./styled";
-
-interface IFormModal {
-  showOnBuy: boolean;
-  showOnSell: boolean;
-  onBuy: (formData: IFormFields) => void;
-  onSell: (formData: IFormFields) => void;
-  setShowOnBuy: (value: boolean) => void;
-  setShowOnSell: (value: boolean) => void;
-}
 
 interface ITabs {
   tabTitle: string;
@@ -44,6 +35,8 @@ export const Wallet = (props: IProps) => {
               onSubmit={tab.formModal.onBuy}
               title={`Comprar ${tab.tabTitle}`}
               button="Comprar"
+              loading={tab.formModal.loading}
+              errorMessage={tab.formModal.errorMessage}
             />
             <Form
               showModal={tab.formModal.showOnSell}
@@ -51,6 +44,8 @@ export const Wallet = (props: IProps) => {
               onSubmit={tab.formModal.onSell}
               title={`Vender ${tab.tabTitle}`}
               button="Vender"
+              loading={tab.formModal.loading}
+              errorMessage={tab.formModal.errorMessage}
             />
           </TabPaneWrapper>
         ))}

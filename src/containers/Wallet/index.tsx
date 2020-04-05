@@ -1,6 +1,8 @@
+import { message } from "antd";
 import React from "react";
 import { IFormFields } from "../../components/Form";
 import { Wallet } from "../../components/Wallet";
+import axios from "../../utils/axios-orders";
 
 export const WalletComponent = () => {
   const ultimoMes = React.createRef<HTMLCanvasElement>();
@@ -8,6 +10,9 @@ export const WalletComponent = () => {
 
   const [showOnBuy, setShowOnBuy] = React.useState(false);
   const [showOnSell, setShowOnSell] = React.useState(false);
+
+  const [loading, setLoading] = React.useState(false);
+  const [errorMessage, serErrorMessage] = React.useState("");
 
   const charts = [
     {
@@ -46,22 +51,44 @@ export const WalletComponent = () => {
   ];
 
   const formModal = {
+    errorMessage,
     showOnBuy,
     showOnSell,
-    onBuy: () => onBuy,
+    loading,
+    onBuy: (formData: IFormFields) => onBuyBitcoin(formData),
     onSell: () => onSell,
     setShowOnBuy: () => setShowOnBuy(false),
     setShowOnSell: () => setShowOnSell(false),
   };
 
   const buttons = {
-    onBuy: () => setShowOnBuy(true),
-    onSell: () => setShowOnSell(true),
+    onBuy: () => {
+      setShowOnBuy(true);
+      serErrorMessage("");
+    },
+    onSell: () => {
+      setShowOnSell(true);
+      serErrorMessage("");
+    },
   };
 
-  const onBuy = (formData: IFormFields) => {
-    console.log(formData);
+  const onBuyBitcoin = (formData: IFormFields) => {
+    setLoading(true);
+
+    const order = { amount: formData.amount, coin: "Bitcoin" };
+
+    axios
+      .post("/orders.json", order)
+      .then(() => {
+        setShowOnBuy(false);
+        message.success("Compra realizada com sucesso!");
+      })
+      .catch(() =>
+        serErrorMessage("Oops! Algo deu errado. Tente novamete mais tarde.")
+      )
+      .finally(() => setLoading(false));
   };
+
   const onSell = (formData: IFormFields) => {
     console.log(formData);
   };
