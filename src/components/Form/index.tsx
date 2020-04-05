@@ -1,6 +1,6 @@
-import Modal from "antd/lib/modal/Modal";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { AlertWrapper, ModalWrapper } from "../../styles/Antd/styled";
 import { FormWrapper, Input, Label } from "./styled";
 
 export interface IFormFields {
@@ -16,10 +16,12 @@ export interface IProps {
 }
 
 export const Form = (props: IProps) => {
-  const { register, handleSubmit, errors } = useForm<IFormFields>();
+  const { register, handleSubmit, errors, clearError, setValue } = useForm<
+    IFormFields
+  >();
 
   return (
-    <Modal
+    <ModalWrapper
       okButtonProps={{ htmlType: "submit" }}
       onOk={handleSubmit(props.onSubmit)}
       visible={props.showModal}
@@ -27,21 +29,34 @@ export const Form = (props: IProps) => {
       closable={false}
       maskClosable={true}
       cancelText="Cancelar"
-      onCancel={() => props.setShowModal(false)}
+      onCancel={() => {
+        props.setShowModal(false);
+        clearError();
+        setValue([{ amount: "" }]);
+      }}
       okText={`${props.button}`}
     >
       <FormWrapper>
-        <Label>
-          Quantidade
-          <Input
-            type="number"
-            min={1}
-            name="amount"
-            ref={register({ required: true })}
+        <Label>Quantidade</Label>
+
+        <Input
+          type="number"
+          min={1}
+          name="amount"
+          ref={register({
+            required: { value: true, message: "Informe a quantidade." },
+            min: { value: 1, message: "Quantidade mínima de 1." },
+          })}
+        />
+
+        {errors.amount && (
+          <AlertWrapper
+            showIcon
+            message={`${errors.amount.message}`}
+            type="error"
           />
-          {errors.amount && "Informe a quantidade."}
-        </Label>
+        )}
       </FormWrapper>
-    </Modal>
+    </ModalWrapper>
   );
 };
