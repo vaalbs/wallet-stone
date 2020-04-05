@@ -1,61 +1,87 @@
 import React from "react";
-import { IChart } from "../../components/Chart";
-import { Coins } from "../../components/Coins";
-import { Form, IFormFields } from "../../components/Form";
-import { IButtons, IValue } from "../../components/Wallet/Header";
-import { TabPaneWrapper, TabWrapper } from "../../styles/Tab/styled";
-import { ContentWrapper, Line } from "./styled";
+import { IFormFields } from "../../components/Form";
+import { Wallet } from "../../components/Wallet";
 
-interface IFormModal {
-  showOnBuy: boolean;
-  showOnSell: boolean;
-  onBuy: (formData: IFormFields) => void;
-  onSell: (formData: IFormFields) => void;
-  setShowOnBuy: (value: boolean) => void;
-  setShowOnSell: (value: boolean) => void;
-}
+export const WalletComponent = () => {
+  const ultimoMes = React.createRef<HTMLCanvasElement>();
+  const mes2 = React.createRef<HTMLCanvasElement>();
 
-interface ITabs {
-  tabTitle: string;
-  values: IValue[];
-  buttons: IButtons;
-  charts: IChart[];
-  formModal: IFormModal;
-}
+  const [showOnBuy, setShowOnBuy] = React.useState(false);
+  const [showOnSell, setShowOnSell] = React.useState(false);
 
-interface IProps {
-  tabs: ITabs[];
-}
+  const charts = [
+    {
+      labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+      data: [12, 19, 3, 5, 4, 1],
+      tabTitle: "Janeiro",
+      reference: ultimoMes,
+    },
+    {
+      labels: ["Yellow", "Purple", "Red", "Orange", "Blue", "Green"],
+      data: [7, 9, 1, 15, 9, 10],
+      tabTitle: "Março",
+      reference: mes2,
+    },
+  ];
 
-export const Wallet = (props: IProps) => {
-  return (
-    <ContentWrapper>
-      <TabWrapper defaultActiveKey="0">
-        {props.tabs.map((tab, index) => (
-          <TabPaneWrapper tab={`${tab.tabTitle}`} key={`${index}`}>
-            <Coins
-              values={tab.values}
-              charts={tab.charts}
-              buttons={tab.buttons}
-            />
-            <Form
-              showModal={tab.formModal.showOnBuy}
-              setShowModal={() => tab.formModal.setShowOnBuy(false)}
-              onSubmit={tab.formModal.onBuy}
-              title={`Comprar ${tab.tabTitle}`}
-              button="Comprar"
-            />
-            <Form
-              showModal={tab.formModal.showOnSell}
-              setShowModal={() => tab.formModal.setShowOnSell(false)}
-              onSubmit={tab.formModal.onSell}
-              title={`Vender ${tab.tabTitle}`}
-              button="Vender"
-            />
-          </TabPaneWrapper>
-        ))}
-      </TabWrapper>
-      <Line />
-    </ContentWrapper>
-  );
+  const charts2 = [
+    {
+      labels: ["Green", "Yellow", "Pink", "Red", "Gray", "Blue"],
+      data: [12, 19, 3, 5, 4, 1],
+      tabTitle: "Janeiro",
+      reference: ultimoMes,
+    },
+    {
+      labels: ["Blue", "Gray", "Red", "Pink", "Yellow", "Green"],
+      data: [7, 9, 1, 15, 9, 10],
+      tabTitle: "Março",
+      reference: mes2,
+    },
+  ];
+
+  const dataMock = [
+    { title: "Valor Patrimonial", value: "25.000" },
+    { title: "Variação Patrimonial", value: "7.0000" },
+    { title: "Saldo", value: "2.000" },
+  ];
+
+  const formModal = {
+    showOnBuy,
+    showOnSell,
+    onBuy: () => onBuy,
+    onSell: () => onSell,
+    setShowOnBuy: () => setShowOnBuy(false),
+    setShowOnSell: () => setShowOnSell(false),
+  };
+
+  const buttons = {
+    onBuy: () => setShowOnBuy(true),
+    onSell: () => setShowOnSell(true),
+  };
+
+  const onBuy = (formData: IFormFields) => {
+    console.log(formData);
+  };
+  const onSell = (formData: IFormFields) => {
+    console.log(formData);
+  };
+
+  const tabs = [
+    {
+      tabTitle: "Bitcoin",
+      values: dataMock,
+      buttons,
+      charts,
+      formModal,
+    },
+    {
+      tabTitle: "Brita",
+      values: dataMock,
+      buttons,
+      charts: charts2,
+      formModal,
+    },
+  ];
+
+  return <Wallet tabs={tabs} />;
 };
