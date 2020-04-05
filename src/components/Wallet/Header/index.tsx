@@ -9,7 +9,7 @@ import {
   Prefix,
   SellIcon,
   Title,
-  Value
+  Value,
 } from "./styled";
 
 export interface IValue {
@@ -17,16 +17,22 @@ export interface IValue {
   value: string;
 }
 
+export interface IButtons {
+  onBuy: () => void;
+  onSell: () => void;
+}
+
 interface IProps {
   options: IValue[];
+  buttons: IButtons;
 }
 
 export const Header = (props: IProps) => {
   return (
     <HeaderWrapper>
       <ListWrapper>
-        {props.options.map(option => (
-          <BlockWrapper>
+        {props.options.map((option, index) => (
+          <BlockWrapper key={index}>
             <Title>{option.title}</Title>
             <Value>
               <Prefix>R$</Prefix>
@@ -36,10 +42,10 @@ export const Header = (props: IProps) => {
         ))}
       </ListWrapper>
       <ButtonWrapper>
-        <Button>
+        <Button onClick={props.buttons.onBuy}>
           <BuyIcon /> Comprar
         </Button>
-        <Button>
+        <Button onClick={props.buttons.onSell}>
           <SellIcon /> Vender
         </Button>
       </ButtonWrapper>

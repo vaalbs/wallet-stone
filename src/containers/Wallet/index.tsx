@@ -1,42 +1,59 @@
 import React from "react";
+import { IChart } from "../../components/Chart";
 import { Coins } from "../../components/Coins";
+import { Form, IFormFields } from "../../components/Form";
+import { IButtons, IValue } from "../../components/Wallet/Header";
 import { TabPaneWrapper, TabWrapper } from "../../styles/Tab/styled";
 import { ContentWrapper, Line } from "./styled";
 
-export const Wallet = () => {
-  const mes1 = React.createRef<HTMLCanvasElement>();
-  const mes2 = React.createRef<HTMLCanvasElement>();
+interface IFormModal {
+  showOnBuy: boolean;
+  showOnSell: boolean;
+  onBuy: (formData: IFormFields) => void;
+  onSell: (formData: IFormFields) => void;
+  setShowOnBuy: (value: boolean) => void;
+  setShowOnSell: (value: boolean) => void;
+}
 
-  const charts = [
-    {
-      labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-      data: [12, 19, 3, 5, 4, 1],
-      tabTitle: "Janeiro",
-      reference: mes1
-    },
-    {
-      labels: ["Yellow", "Purple", "Red", "Orange", "Blue", "Green"],
-      data: [7, 9, 1, 15, 9, 10],
-      tabTitle: "Março",
-      reference: mes2
-    }
-  ];
+interface ITabs {
+  tabTitle: string;
+  values: IValue[];
+  buttons: IButtons;
+  charts: IChart[];
+  formModal: IFormModal;
+}
 
-  const dataMock = [
-    { title: "Valor Patrimonial", value: "25.000" },
-    { title: "Variação Patrimonial", value: "7.0000" },
-    { title: "Saldo", value: "2.000" }
-  ];
+interface IProps {
+  tabs: ITabs[];
+}
 
+export const Wallet = (props: IProps) => {
   return (
     <ContentWrapper>
-      <TabWrapper defaultActiveKey="1">
-        <TabPaneWrapper tab="Tab 1" key="1">
-          <Coins values={dataMock} charts={charts} />
-        </TabPaneWrapper>
-        <TabPaneWrapper tab="Tab 2" key="2">
-          Content of Tab Pane 2
-        </TabPaneWrapper>
+      <TabWrapper defaultActiveKey="0">
+        {props.tabs.map((tab, index) => (
+          <TabPaneWrapper tab={`${tab.tabTitle}`} key={`${index}`}>
+            <Coins
+              values={tab.values}
+              charts={tab.charts}
+              buttons={tab.buttons}
+            />
+            <Form
+              showModal={tab.formModal.showOnBuy}
+              setShowModal={() => tab.formModal.setShowOnBuy(false)}
+              onSubmit={tab.formModal.onBuy}
+              title={`Comprar ${tab.tabTitle}`}
+              button="Comprar"
+            />
+            <Form
+              showModal={tab.formModal.showOnSell}
+              setShowModal={() => tab.formModal.setShowOnSell(false)}
+              onSubmit={tab.formModal.onSell}
+              title={`Vender ${tab.tabTitle}`}
+              button="Vender"
+            />
+          </TabPaneWrapper>
+        ))}
       </TabWrapper>
       <Line />
     </ContentWrapper>

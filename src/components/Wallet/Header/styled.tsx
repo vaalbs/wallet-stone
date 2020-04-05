@@ -24,7 +24,7 @@ export const BlockWrapper = styled.div`
 `;
 
 export const Title = styled.span`
-  color: ${props => props.theme.color.grayLight02};
+  color: ${(props) => props.theme.color.grayLight02};
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -32,7 +32,7 @@ export const Title = styled.span`
 
 export const Value = styled.p`
   align-items: flex-end;
-  color: ${props => props.theme.color.primary};
+  color: ${(props) => props.theme.color.primary};
   display: flex;
   font-size: 22px;
   font-weight: 600;
@@ -53,10 +53,11 @@ export const ButtonWrapper = styled.div`
 
 export const Button = styled.button`
   align-items: center;
-  background-color: ${props => props.theme.color.purpleDark};
+  background-color: ${(props) => props.theme.color.purpleDark};
   border: 0;
   border-radius: 4px;
-  color: ${props => props.theme.color.white};
+  color: ${(props) => props.theme.color.white};
+  cursor: pointer;
   display: flex;
   height: 36px;
   padding: 8px 16px;
