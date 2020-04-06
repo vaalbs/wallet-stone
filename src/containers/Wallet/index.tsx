@@ -1,9 +1,12 @@
-import { message } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { message, Modal } from "antd";
 import React from "react";
 import { IFormFields } from "../../components/Form";
 import { Wallet } from "../../components/Wallet";
 import axios from "../../utils/axios-orders";
 import { dateNow } from "../../utils/formatters";
+
+const { confirm } = Modal;
 
 export const WalletComponent = () => {
   const ultimoMes = React.createRef<HTMLCanvasElement>();
@@ -60,6 +63,7 @@ export const WalletComponent = () => {
     onSell: () => onSell,
     setShowOnBuy: () => setShowOnBuy(false),
     setShowOnSell: () => setShowOnSell(false),
+    showConfirm: () => showConfirm(),
   };
 
   const buttons = {
@@ -72,6 +76,20 @@ export const WalletComponent = () => {
       serErrorMessage("");
     },
   };
+
+  const showConfirm = () => {
+    confirm({
+      title: "Tem certeza que deseja trocar as moedas?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Sim",
+      okButtonProps: { loading },
+      cancelText: "Não",
+      onOk: () => onChangeCoins(),
+      onCancel() {},
+    });
+  };
+
+  const onChangeCoins = () => {};
 
   const onBuyBitcoin = (formData: IFormFields) => {
     setLoading(true);

@@ -1,6 +1,6 @@
 import Chart from "chart.js";
 import React from "react";
-import { TabPaneWrapper } from "../../styles/Tab/styled";
+import { TabPaneWrapper } from "../../styles/Antd/Tab/styled";
 import { ChartWrapper, Tab } from "./styled";
 
 export interface IChart {
@@ -32,10 +32,10 @@ export const ChartComponent = (props: IProps) => {
             data: props.charts[active].data,
             backgroundColor: "#e2e7f1",
             borderColor: "#9557ffa3",
-            borderWidth: 1
-          }
-        ]
-      }
+            borderWidth: 1,
+          },
+        ],
+      },
     });
   }, [active]);
 
@@ -47,7 +47,7 @@ export const ChartComponent = (props: IProps) => {
         tabColorHover="#99a1a8"
         tabActive="#99a1a8"
         tabLine="#99a1a8"
-        onChange={activeKey => setActive(activeKey as any)}
+        onChange={(activeKey) => setActive(activeKey as any)}
       >
         {props.charts.map((chart, index) => (
           <TabPaneWrapper

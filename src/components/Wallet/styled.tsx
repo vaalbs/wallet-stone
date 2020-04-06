@@ -1,3 +1,4 @@
+import { SwapOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
 import styled from "styled-components";
 
@@ -15,4 +16,32 @@ export const Line = styled.hr`
   position: absolute;
   top: 96px;
   width: calc(100% - 120px);
+`;
+
+export const Button = styled.button`
+  align-items: center;
+  background-color: inherit;
+  border: 0;
+  color: ${(props) => props.theme.color.gray};
+  cursor: pointer;
+  display: flex;
+  font-size: 11px;
+  font-weight: 600;
+  position: absolute;
+  right: 0;
+  text-transform: uppercase;
+  top: 10px;
+
+  &:hover {
+    color: ${(props) => props.theme.color.purple};
+  }
+`;
+
+export const Icon = styled(SwapOutlined)`
+  margin-right: 8px;
+
+  svg {
+    height: 16px;
+    width: 16px;
+  }
 `;

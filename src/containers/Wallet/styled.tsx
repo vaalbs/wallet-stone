@@ -10,8 +10,8 @@ export const ContentWrapper = styled(Content)`
 
 export const Line = styled.hr`
   border-top: 2px solid;
-  border-top-color: ${props => props.theme.color.grayLight};
-  border-left-color: ${props => props.theme.color.grayLight};
+  border-top-color: ${(props) => props.theme.color.grayLight};
+  border-left-color: ${(props) => props.theme.color.grayLight};
   position: absolute;
   top: 96px;
   width: calc(100% - 120px);

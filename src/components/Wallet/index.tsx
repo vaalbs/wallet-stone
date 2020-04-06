@@ -1,10 +1,10 @@
 import React from "react";
-import { TabPaneWrapper, TabWrapper } from "../../styles/Tab/styled";
+import { TabPaneWrapper, TabWrapper } from "../../styles/Antd/Tab/styled";
 import { IChart } from "../Chart";
 import { Coins } from "../Coins";
 import { Form, IFormModal } from "../Form";
 import { IButtons, IValue } from "../Wallet/Header";
-import { ContentWrapper, Line } from "./styled";
+import { Button, ContentWrapper, Icon, Line } from "./styled";
 
 interface ITabs {
   tabTitle: string;
@@ -24,6 +24,10 @@ export const Wallet = (props: IProps) => {
       <TabWrapper defaultActiveKey="0">
         {props.tabs.map((tab, index) => (
           <TabPaneWrapper tab={`${tab.tabTitle}`} key={`${index}`}>
+            <Button onClick={tab.formModal.showConfirm}>
+              <Icon />
+              Trocar moeda
+            </Button>
             <Coins
               values={tab.values}
               charts={tab.charts}
