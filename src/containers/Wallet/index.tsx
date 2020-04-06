@@ -3,6 +3,7 @@ import React from "react";
 import { IFormFields } from "../../components/Form";
 import { Wallet } from "../../components/Wallet";
 import axios from "../../utils/axios-orders";
+import { dateNow } from "../../utils/formatters";
 
 export const WalletComponent = () => {
   const ultimoMes = React.createRef<HTMLCanvasElement>();
@@ -75,7 +76,12 @@ export const WalletComponent = () => {
   const onBuyBitcoin = (formData: IFormFields) => {
     setLoading(true);
 
-    const order = { amount: formData.amount, coin: "Bitcoin" };
+    const order = {
+      amount: formData.amount,
+      coin: "Bitcoin",
+      date: dateNow(),
+      operation: "buy",
+    };
 
     axios
       .post("/orders.json", order)

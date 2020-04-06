@@ -10,23 +10,23 @@ export const TabWrapper = styled(Tabs)<{
   tabLine?: string;
 }>`
   .ant-tabs-tab {
-    color: ${props =>
+    color: ${(props) =>
       props.tabColor ? props.tabColor : props.theme.color.gray};
     font-weight: 600;
 
     &:hover {
-      color: ${props =>
+      color: ${(props) =>
         props.tabColorHover ? props.tabColorHover : props.theme.color.purple};
     }
   }
 
   .ant-tabs-tab-active {
-    color: ${props =>
+    color: ${(props) =>
       props.tabActive ? props.tabActive : props.theme.color.purple};
   }
 
   .ant-tabs-ink-bar {
-    background-color: ${props =>
+    background-color: ${(props) =>
       props.tabLine ? props.tabLine : props.theme.color.purple};
   }
 `;
