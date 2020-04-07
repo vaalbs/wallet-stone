@@ -1,11 +1,12 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { message, Modal } from "antd";
+import { Modal } from "antd";
 import React from "react";
 import { IFormFields } from "../../components/Form";
+import { Loading } from "../../components/Loading";
 import { operation } from "../../components/RecentTransactions";
 import { Title } from "../../components/Title";
 import { Wallet } from "../../components/Wallet";
-import axios from "../../utils/axios-orders";
+import firebaseRef from "../../service/firebase";
 import { dateNow } from "../../utils/formatters";
 
 const { confirm } = Modal;
@@ -19,6 +20,19 @@ export const WalletComponent = () => {
 
   const [loading, setLoading] = React.useState(false);
   const [errorMessage, serErrorMessage] = React.useState("");
+
+  const [sale, setSale] = React.useState();
+
+  React.useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    try {
+      const sale = firebaseRef.database().ref().child("user");
+      await sale.on("value", (snap) => setSale(snap.val().sale));
+    } catch (error) {}
+  };
 
   const charts = [
     {
@@ -53,7 +67,7 @@ export const WalletComponent = () => {
   const dataMock = [
     { title: "Valor Patrimonial", value: "25.000" },
     { title: "Variação Patrimonial", value: "7.0000" },
-    { title: "Saldo", value: "2.000" },
+    { title: "Saldo", value: sale },
   ];
 
   const formModal = {
@@ -116,16 +130,13 @@ export const WalletComponent = () => {
       operation: "buy",
     };
 
-    axios
-      .post("/orders.json", order)
-      .then(() => {
-        setShowOnBuy(false);
-        message.success("Compra realizada com sucesso!");
-      })
-      .catch(() =>
-        serErrorMessage("Oops! Algo deu errado. Tente novamete mais tarde.")
-      )
-      .finally(() => setLoading(false));
+    try {
+      firebaseRef.database().ref("user/orders").push(order);
+      setShowOnBuy(false);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onSell = (formData: IFormFields) => {
@@ -154,7 +165,7 @@ export const WalletComponent = () => {
   return (
     <>
       <Title title="Wallet" />
-      <Wallet tabs={tabs} />
+      {sale ? <Wallet tabs={tabs} /> : <Loading />}
     </>
   );
 };

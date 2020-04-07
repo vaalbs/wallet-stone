@@ -14,7 +14,7 @@ import {
 
 export interface IValue {
   title: string;
-  value: string;
+  value?: string;
 }
 
 export interface IButtons {

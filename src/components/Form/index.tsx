@@ -45,12 +45,9 @@ export const Form = (props: IProps) => {
       maskClosable={true}
       confirmLoading={props.loading}
       cancelText="Cancelar"
-      onCancel={() => {
-        props.setShowModal(false);
-        clearError();
-        setValue([{ amount: "" }]);
-      }}
+      onCancel={() => props.setShowModal(false)}
       okText={`${props.button}`}
+      destroyOnClose={true}
     >
       <FormWrapper>
         <Label>Quantidade</Label>
