@@ -3,6 +3,7 @@ import { TabPaneWrapper, TabWrapper } from "../../styles/Antd/Tab/styled";
 import { IChart } from "../Chart";
 import { Coins } from "../Coins";
 import { Form, IFormModal } from "../Form";
+import { ITransaction } from "../RecentTransactions";
 import { IButtons, IValue } from "../Wallet/Header";
 import { Button, ContentWrapper, Icon, Line } from "./styled";
 
@@ -11,6 +12,7 @@ interface ITabs {
   values: IValue[];
   buttons: IButtons;
   charts: IChart[];
+  transactions: ITransaction[];
   formModal: IFormModal;
 }
 
@@ -32,6 +34,7 @@ export const Wallet = (props: IProps) => {
               values={tab.values}
               charts={tab.charts}
               buttons={tab.buttons}
+              transactions={tab.transactions}
             />
             <Form
               showModal={tab.formModal.showOnBuy}

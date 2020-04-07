@@ -5,7 +5,7 @@ import styled from "styled-components";
 const { Content } = Layout;
 
 export const ContentWrapper = styled(Content)`
-  padding: 60px 60px 0 60px;
+  padding: 40px 60px 0 60px;
   position: relative;
 `;
 
@@ -14,8 +14,9 @@ export const Line = styled.hr`
   border-top-color: ${(props) => props.theme.color.grayLight};
   border-left-color: ${(props) => props.theme.color.grayLight};
   position: absolute;
-  top: 96px;
+  top: 76px;
   width: calc(100% - 120px);
+  z-index: -1;
 `;
 
 export const Button = styled.button`
@@ -30,7 +31,7 @@ export const Button = styled.button`
   position: absolute;
   right: 0;
   text-transform: uppercase;
-  top: 10px;
+  top: 14px;
 
   &:hover {
     color: ${(props) => props.theme.color.purple};

@@ -2,6 +2,8 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { message, Modal } from "antd";
 import React from "react";
 import { IFormFields } from "../../components/Form";
+import { operation } from "../../components/RecentTransactions";
+import { Title } from "../../components/Title";
 import { Wallet } from "../../components/Wallet";
 import axios from "../../utils/axios-orders";
 import { dateNow } from "../../utils/formatters";
@@ -77,6 +79,19 @@ export const WalletComponent = () => {
     },
   };
 
+  const transactions = [
+    {
+      dateHour: "06/04/2020 20:40",
+      type: "buy" as operation,
+      value: 4500.0,
+    },
+    {
+      dateHour: "05/04/2020 17:34",
+      type: "sell" as operation,
+      value: 500.0,
+    },
+  ];
+
   const showConfirm = () => {
     confirm({
       title: "Tem certeza que deseja trocar as moedas?",
@@ -123,6 +138,7 @@ export const WalletComponent = () => {
       values: dataMock,
       buttons,
       charts,
+      transactions,
       formModal,
     },
     {
@@ -130,9 +146,15 @@ export const WalletComponent = () => {
       values: dataMock,
       buttons,
       charts: charts2,
+      transactions,
       formModal,
     },
   ];
 
-  return <Wallet tabs={tabs} />;
+  return (
+    <>
+      <Title title="Wallet" />
+      <Wallet tabs={tabs} />
+    </>
+  );
 };

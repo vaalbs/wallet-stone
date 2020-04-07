@@ -1,15 +1,22 @@
-import { Breadcrumb } from "antd";
 import React from "react";
-import { BreadcrumbItem } from "./styled";
+import { BreadcrumbItem, BreadcrumbWrapper } from "./styled";
 
 interface IProps {
   title: string;
+  fontSize?: string;
+  padding?: boolean;
+  borderBottom?: boolean;
 }
 
-export const Title = (props: IProps) => {
+export const Title = ({
+  title,
+  fontSize,
+  padding = true,
+  borderBottom,
+}: IProps) => {
   return (
-    <Breadcrumb>
-      <BreadcrumbItem>{props.title}</BreadcrumbItem>
-    </Breadcrumb>
+    <BreadcrumbWrapper padding={padding} borderBottom={borderBottom}>
+      <BreadcrumbItem fontSize={fontSize}>{title}</BreadcrumbItem>
+    </BreadcrumbWrapper>
   );
 };
