@@ -14,6 +14,7 @@ export const Input = styled.input`
   border-radius: 6px;
   height: 32px;
   margin-bottom: 16px;
+  padding: 0 8px;
 `;
 
 export const Paragraph = styled.p`

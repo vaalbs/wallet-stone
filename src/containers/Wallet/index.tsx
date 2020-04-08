@@ -14,7 +14,7 @@ const { confirm } = Modal;
 
 interface IUser {
   sale: string;
-  bitcon: number;
+  bitcoin: number;
   brita: number;
 }
 
@@ -26,7 +26,7 @@ export const WalletComponent = () => {
   const [showOnSell, setShowOnSell] = React.useState(false);
 
   const [loading, setLoading] = React.useState(false);
-  const [errorMessage, serErrorMessage] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState("");
 
   const [user, setUser] = React.useState<IUser>();
   const [brita, setBrita] = React.useState(0);
@@ -87,7 +87,7 @@ export const WalletComponent = () => {
     },
   ];
 
-  const dataMock = [
+  const dataBitcoin = [
     { title: "Valor Patrimonial", value: "25.0" },
     { title: "Variação Patrimonial", value: "7.0" },
     { title: "Saldo", value: user?.sale },
@@ -102,13 +102,16 @@ export const WalletComponent = () => {
     { title: "Saldo", value: user?.sale },
   ];
 
+  console.log(user);
+
   const formModalBitcoin = {
     errorMessage,
     showOnBuy,
     showOnSell,
     loading,
-    coinValue: brita,
-    onBuy: (formData: IFormFields) => onBuyBrita(formData),
+    coinValue: bitcoin,
+    onBuy: (formData: IFormFields) =>
+      onBuy(formData, bitcoin, "Bitcoin", user?.bitcoin),
     onSell: () => onSell,
     setShowOnBuy: () => setShowOnBuy(false),
     setShowOnSell: () => setShowOnSell(false),
@@ -121,7 +124,8 @@ export const WalletComponent = () => {
     showOnSell,
     loading,
     coinValue: brita,
-    onBuy: (formData: IFormFields) => onBuyBrita(formData),
+    onBuy: (formData: IFormFields) =>
+      onBuy(formData, brita, "Brita", user?.brita),
     onSell: () => onSell,
     setShowOnBuy: () => setShowOnBuy(false),
     setShowOnSell: () => setShowOnSell(false),
@@ -131,11 +135,11 @@ export const WalletComponent = () => {
   const buttons = {
     onBuy: () => {
       setShowOnBuy(true);
-      serErrorMessage("");
+      setErrorMessage("");
     },
     onSell: () => {
       setShowOnSell(true);
-      serErrorMessage("");
+      setErrorMessage("");
     },
   };
 
@@ -166,14 +170,27 @@ export const WalletComponent = () => {
 
   const onChangeCoins = () => {};
 
-  const onBuyBrita = (formData: IFormFields) => {
+  const onBuy = (
+    formData: IFormFields,
+    coinValue: number,
+    title: string,
+    coinAmount?: number
+  ) => {
     setLoading(true);
 
-    const total = Number(user?.sale) - formData.amount * (brita ?? 0);
+    const sale = formData.amount * coinValue;
+
+    if (sale > Number(user?.sale)) {
+      setLoading(false);
+      setErrorMessage("Saldo insuficiente!");
+      return;
+    }
+
+    const total = Number(user?.sale) - formData.amount * (coinValue ?? 0);
 
     const order = {
       amount: formData.amount,
-      coin: "Brita",
+      coin: title,
       date: dateNow(),
       operation: "buy",
     };
@@ -182,9 +199,10 @@ export const WalletComponent = () => {
       firebaseRef
         .database()
         .ref("user")
-        .set({
+        .update({
           sale: total,
-          brita: Number(formData.amount) + (user?.brita ?? 0),
+          [title.toLocaleLowerCase()]:
+            Number(formData.amount) + (coinAmount ?? 0),
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order));
 
@@ -206,7 +224,7 @@ export const WalletComponent = () => {
   const tabs = [
     {
       tabTitle: "Bitcoin",
-      values: dataMock,
+      values: dataBitcoin,
       buttons,
       charts,
       transactions,
