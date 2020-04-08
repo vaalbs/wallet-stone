@@ -13,3 +13,15 @@ export const dateNow = () => {
 
   return localdate;
 };
+
+export const dateNowEUA = (day: number) => {
+  var dNow = new Date();
+  var localdate =
+    dNow.getMonth() +
+    "-" +
+    (dNow.getDate() - 2 + day) +
+    "-" +
+    dNow.getFullYear();
+
+  return localdate;
+};

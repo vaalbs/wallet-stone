@@ -44,6 +44,7 @@ export const Wallet = (props: IProps) => {
               button="Comprar"
               loading={tab.formModal.loading}
               errorMessage={tab.formModal.errorMessage}
+              coinValue={tab.formModal.coinValue}
             />
             <Form
               showModal={tab.formModal.showOnSell}
@@ -53,6 +54,7 @@ export const Wallet = (props: IProps) => {
               button="Vender"
               loading={tab.formModal.loading}
               errorMessage={tab.formModal.errorMessage}
+              coinValue={tab.formModal.coinValue}
             />
           </TabPaneWrapper>
         ))}

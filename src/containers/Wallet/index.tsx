@@ -1,5 +1,6 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Modal } from "antd";
+import { message, Modal } from "antd";
+import axios from "axios";
 import React from "react";
 import { IFormFields } from "../../components/Form";
 import { Loading } from "../../components/Loading";
@@ -7,9 +8,15 @@ import { operation } from "../../components/RecentTransactions";
 import { Title } from "../../components/Title";
 import { Wallet } from "../../components/Wallet";
 import firebaseRef from "../../service/firebase";
-import { dateNow } from "../../utils/formatters";
+import { dateNow, dateNowEUA } from "../../utils/formatters";
 
 const { confirm } = Modal;
+
+interface IUser {
+  sale: string;
+  bitcon: number;
+  brita: number;
+}
 
 export const WalletComponent = () => {
   const ultimoMes = React.createRef<HTMLCanvasElement>();
@@ -21,17 +28,33 @@ export const WalletComponent = () => {
   const [loading, setLoading] = React.useState(false);
   const [errorMessage, serErrorMessage] = React.useState("");
 
-  const [sale, setSale] = React.useState();
+  const [user, setUser] = React.useState<IUser>();
+  const [brita, setBrita] = React.useState(0);
+  const [bitcoin, setBitcoin] = React.useState(0);
 
   React.useEffect(() => {
     getData();
-  }, []);
+    getCoins();
+  }, [user?.sale]);
 
-  const getData = async () => {
+  const getData = () => {
     try {
       const sale = firebaseRef.database().ref().child("user");
-      await sale.on("value", (snap) => setSale(snap.val().sale));
+      sale.on("value", (snap) => setUser(snap.val()));
     } catch (error) {}
+  };
+
+  const getCoins = () => {
+    const initialDate = dateNowEUA(0);
+    const finalDate = dateNowEUA(1);
+
+    axios
+      .get(
+        `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@dataInicial='${initialDate}'&@dataFinalCotacao='${finalDate}'&$top=100&$format=json&$select=cotacaoCompra`
+      )
+      .then((response: any) =>
+        setBrita(response.data.value[0].cotacaoCompra.toFixed(2))
+      );
   };
 
   const charts = [
@@ -65,17 +88,40 @@ export const WalletComponent = () => {
   ];
 
   const dataMock = [
-    { title: "Valor Patrimonial", value: "25.000" },
-    { title: "Variação Patrimonial", value: "7.0000" },
-    { title: "Saldo", value: sale },
+    { title: "Valor Patrimonial", value: "25.0" },
+    { title: "Variação Patrimonial", value: "7.0" },
+    { title: "Saldo", value: user?.sale },
   ];
 
-  const formModal = {
+  const dataBrita = [
+    {
+      title: "Valor Patrimonial",
+      value: (Number(user?.sale ?? 0) + (user?.brita ?? 0) * brita).toFixed(2),
+    },
+    { title: "Total em Brita", value: ((user?.brita ?? 0) * brita).toFixed(2) },
+    { title: "Saldo", value: user?.sale },
+  ];
+
+  const formModalBitcoin = {
     errorMessage,
     showOnBuy,
     showOnSell,
     loading,
-    onBuy: (formData: IFormFields) => onBuyBitcoin(formData),
+    coinValue: brita,
+    onBuy: (formData: IFormFields) => onBuyBrita(formData),
+    onSell: () => onSell,
+    setShowOnBuy: () => setShowOnBuy(false),
+    setShowOnSell: () => setShowOnSell(false),
+    showConfirm: () => showConfirm(),
+  };
+
+  const formModalBrita = {
+    errorMessage,
+    showOnBuy,
+    showOnSell,
+    loading,
+    coinValue: brita,
+    onBuy: (formData: IFormFields) => onBuyBrita(formData),
     onSell: () => onSell,
     setShowOnBuy: () => setShowOnBuy(false),
     setShowOnSell: () => setShowOnSell(false),
@@ -120,20 +166,34 @@ export const WalletComponent = () => {
 
   const onChangeCoins = () => {};
 
-  const onBuyBitcoin = (formData: IFormFields) => {
+  const onBuyBrita = (formData: IFormFields) => {
     setLoading(true);
+
+    const total = Number(user?.sale) - formData.amount * (brita ?? 0);
 
     const order = {
       amount: formData.amount,
-      coin: "Bitcoin",
+      coin: "Brita",
       date: dateNow(),
       operation: "buy",
     };
 
     try {
-      firebaseRef.database().ref("user/orders").push(order);
+      firebaseRef
+        .database()
+        .ref("user")
+        .set({
+          sale: total,
+          brita: Number(formData.amount) + (user?.brita ?? 0),
+        })
+        .then(() => firebaseRef.database().ref("user/orders").push(order));
+
       setShowOnBuy(false);
+      message.success("Compra realizada com sucesso!");
     } catch (error) {
+      message.error(
+        error.message || "Oops! Algo deu errado. Tente novamente mais tarde."
+      );
     } finally {
       setLoading(false);
     }
@@ -150,22 +210,22 @@ export const WalletComponent = () => {
       buttons,
       charts,
       transactions,
-      formModal,
+      formModal: formModalBitcoin,
     },
     {
       tabTitle: "Brita",
-      values: dataMock,
+      values: dataBrita,
       buttons,
       charts: charts2,
       transactions,
-      formModal,
+      formModal: formModalBrita,
     },
   ];
 
   return (
     <>
       <Title title="Wallet" />
-      {sale ? <Wallet tabs={tabs} /> : <Loading />}
+      {user ? <Wallet tabs={tabs} /> : <Loading />}
     </>
   );
 };

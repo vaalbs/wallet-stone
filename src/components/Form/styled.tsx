@@ -13,4 +13,14 @@ export const Input = styled.input`
   border-color: ${(props) => props.theme.color.grayLight02};
   border-radius: 6px;
   height: 32px;
+  margin-bottom: 16px;
+`;
+
+export const Paragraph = styled.p`
+  color: ${(props) => props.theme.color.gray};
+`;
+
+export const CoinValue = styled.span`
+  color: ${(props) => props.theme.color.gray};
+  font-weight: 600;
 `;
