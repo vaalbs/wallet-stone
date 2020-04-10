@@ -1,6 +1,6 @@
 import React from "react";
 import { ChartComponent, IChart } from "../Chart";
-import { ITransaction, RecentTransactions } from "../RecentTransactions";
+import { ITransaction, RecentTransactions } from "../Recent-Transactions";
 import { Header, IButtons, IValue } from "../Wallet/Header";
 
 interface IProps {

@@ -3,7 +3,7 @@ import { TabPaneWrapper, TabWrapper } from "../../styles/Antd/Tab/styled";
 import { IChart } from "../Chart";
 import { Coins } from "../Coins";
 import { Form, IFormModal } from "../Form";
-import { ITransaction } from "../RecentTransactions";
+import { ITransaction } from "../Recent-Transactions";
 import { IButtons, IValue } from "../Wallet/Header";
 import { Button, ContentWrapper, Icon, Line } from "./styled";
 

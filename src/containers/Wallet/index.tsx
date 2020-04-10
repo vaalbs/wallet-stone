@@ -4,7 +4,7 @@ import axios from "axios";
 import React from "react";
 import { IFormFields } from "../../components/Form";
 import { Loading } from "../../components/Loading";
-import { operation } from "../../components/RecentTransactions";
+import { operation } from "../../components/Recent-Transactions";
 import { Title } from "../../components/Title";
 import { Wallet } from "../../components/Wallet";
 import firebaseRef from "../../service/firebase";
