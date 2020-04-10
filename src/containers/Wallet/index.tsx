@@ -4,7 +4,7 @@ import axios from "axios";
 import React from "react";
 import { IFormFields } from "../../components/Form";
 import { Loading } from "../../components/Loading";
-import { operation } from "../../components/Recent-Transactions";
+import { ITransaction } from "../../components/Recent-Transactions";
 import { Title } from "../../components/Title";
 import { Wallet } from "../../components/Wallet";
 import firebaseRef from "../../service/firebase";
@@ -16,7 +16,7 @@ interface IUser {
   sale: string;
   bitcoin: number;
   brita: number;
-  orders: any;
+  orders: ITransaction;
 }
 
 export const WalletComponent = () => {
@@ -30,6 +30,8 @@ export const WalletComponent = () => {
   const [errorMessage, setErrorMessage] = React.useState("");
 
   const [user, setUser] = React.useState<IUser>();
+  const [orderBitcoin, setOrderBitcoin] = React.useState<ITransaction[]>([]);
+  const [orderBrita, setOrderBrita] = React.useState<ITransaction[]>([]);
   const [brita, setBrita] = React.useState(0);
   const [bitcoin, setBitcoin] = React.useState(0);
 
@@ -37,6 +39,11 @@ export const WalletComponent = () => {
     getData();
     getCoins();
   }, [user?.sale]);
+
+  React.useEffect(() => {
+    getOrdersBitcoin();
+    getOrdersBrita();
+  }, [user?.orders]);
 
   const getData = () => {
     try {
@@ -64,6 +71,36 @@ export const WalletComponent = () => {
         `https://economia.awesomeapi.com.br/BTC-BRL/?start_date=${dateBitcoin()}&end_date=${dateBitcoin()}`
       )
       .then((response) => setBitcoin(response.data[0].bid));
+  };
+
+  const getOrdersBitcoin = () => {
+    if (user?.orders) {
+      let order: ITransaction[] = [];
+      Object.values(user.orders).reduce(function (result: any, key: any) {
+        order.push(key[0]);
+      }, {});
+
+      const orderBitcoin = order
+        .filter((order) => order.coin === "Bitcoin")
+        .map((order) => order);
+
+      setOrderBitcoin(orderBitcoin);
+    }
+  };
+
+  const getOrdersBrita = () => {
+    if (user?.orders) {
+      let order: ITransaction[] = [];
+      Object.values(user.orders).reduce(function (result: any, key: any) {
+        order.push(key[0]);
+      }, {});
+
+      const orderBrita = order
+        .filter((order) => order.coin === "Brita")
+        .map((order) => order);
+
+      setOrderBrita(orderBrita);
+    }
   };
 
   const charts = [
@@ -164,19 +201,6 @@ export const WalletComponent = () => {
     },
   };
 
-  const transactions = [
-    {
-      dateHour: "06/04/2020 20:40",
-      type: "buy" as operation,
-      value: 4500.0,
-    },
-    {
-      dateHour: "05/04/2020 17:34",
-      type: "sell" as operation,
-      value: 500.0,
-    },
-  ];
-
   const showConfirm = () => {
     confirm({
       title: "Tem certeza que deseja trocar as moedas?",
@@ -213,7 +237,7 @@ export const WalletComponent = () => {
       {
         amount: formData.amount,
         coin: title,
-        date: dateNow(),
+        dateHour: dateNow(),
         operation: "buy",
         total: totalBuy,
       },
@@ -262,7 +286,7 @@ export const WalletComponent = () => {
       {
         amount: formData.amount,
         coin: title,
-        date: dateNow(),
+        dateHour: dateNow(),
         operation: "sell",
         total: total,
       },
@@ -295,7 +319,7 @@ export const WalletComponent = () => {
       values: dataBitcoin,
       buttons,
       charts,
-      transactions,
+      transactions: orderBitcoin,
       formModal: formModalBitcoin,
     },
     {
@@ -303,7 +327,7 @@ export const WalletComponent = () => {
       values: dataBrita,
       buttons,
       charts: charts2,
-      transactions,
+      transactions: orderBrita,
       formModal: formModalBrita,
     },
   ];

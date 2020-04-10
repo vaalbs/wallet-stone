@@ -1,6 +1,7 @@
 import React from "react";
 import { Title } from "../Title";
 import {
+  Amount,
   DateHour,
   IconBuy,
   IconSell,
@@ -14,9 +15,11 @@ import {
 export type operation = "buy" | "sell";
 
 export interface ITransaction {
+  amount: number;
+  coin?: string;
   dateHour: string;
-  type: operation;
-  value: number;
+  operation: operation;
+  total: number;
 }
 
 interface IProps {
@@ -33,21 +36,28 @@ export const RecentTransactions = (props: IProps) => {
         title="Transações Recentes"
       />
       <RecentTransactionsList>
-        {props.transactions.map((transaction, index) => (
-          <RecentTransaction key={index}>
-            <DateHour>{transaction.dateHour}</DateHour>
-            {transaction.type === "buy" ? (
-              <Operation>
-                <IconSell /> Comprar
-              </Operation>
-            ) : (
-              <Operation>
-                <IconBuy /> Vender
-              </Operation>
-            )}
-            <Value>R$ {transaction.value}</Value>
-          </RecentTransaction>
-        ))}
+        {props.transactions.length > 0
+          ? props.transactions.map((transaction, index) => (
+              <RecentTransaction key={index}>
+                <DateHour>{transaction.dateHour}</DateHour>
+                {transaction.operation === "buy" ? (
+                  <Operation>
+                    <IconSell /> Comprar
+                  </Operation>
+                ) : (
+                  <Operation>
+                    <IconBuy /> Vender
+                  </Operation>
+                )}
+                <Amount>
+                  {transaction.amount > 1
+                    ? `${transaction.amount} itens`
+                    : `${transaction.amount} item`}
+                </Amount>
+                <Value>R$ {transaction.total.toFixed(2)}</Value>
+              </RecentTransaction>
+            ))
+          : "Nenhuma transação encontrada."}
       </RecentTransactionsList>
     </RecentTransactionsWrapper>
   );

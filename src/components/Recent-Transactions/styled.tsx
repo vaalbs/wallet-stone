@@ -13,7 +13,7 @@ export const RecentTransaction = styled.div`
   align-items: center;
   display: grid;
   grid-gap: 8px;
-  grid-template-columns: 170px auto 100px;
+  grid-template-columns: 170px auto 200px 100px;
   margin-bottom: 12px;
 `;
 
@@ -25,6 +25,12 @@ export const DateHour = styled.p`
 
 export const Operation = styled.p`
   color: ${(props) => props.theme.color.primary};
+  font-weight: 600;
+  margin-bottom: 0;
+`;
+
+export const Amount = styled.p`
+  color: ${(props) => props.theme.color.gray};
   font-weight: 600;
   margin-bottom: 0;
 `;
