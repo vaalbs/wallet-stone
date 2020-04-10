@@ -16,6 +16,7 @@ interface IUser {
   sale: string;
   bitcoin: number;
   brita: number;
+  orders: any;
 }
 
 export const WalletComponent = () => {
@@ -95,27 +96,31 @@ export const WalletComponent = () => {
     },
   ];
 
+  const equityValue = (
+    Number(user?.sale ?? 0) +
+    (user?.bitcoin ?? 0) * bitcoin +
+    (user?.brita ?? 0) * brita
+  ).toFixed(2);
+
   const dataBitcoin = [
     {
       title: "Valor Patrimonial",
-      value: (Number(user?.sale ?? 0) + (user?.bitcoin ?? 0) * bitcoin).toFixed(
-        2
-      ),
+      value: equityValue,
     },
     {
       title: "Total em Bitcoin",
       value: ((user?.bitcoin ?? 0) * bitcoin).toFixed(2),
     },
-    { title: "Saldo", value: user?.sale },
+    { title: "Saldo", value: Number(user?.sale).toFixed(2) },
   ];
 
   const dataBrita = [
     {
       title: "Valor Patrimonial",
-      value: (Number(user?.sale ?? 0) + (user?.brita ?? 0) * brita).toFixed(2),
+      value: equityValue,
     },
     { title: "Total em Brita", value: ((user?.brita ?? 0) * brita).toFixed(2) },
-    { title: "Saldo", value: user?.sale },
+    { title: "Saldo", value: Number(user?.sale).toFixed(2) },
   ];
 
   const formModalBitcoin = {
@@ -192,29 +197,31 @@ export const WalletComponent = () => {
   ) => {
     setLoading(true);
 
-    const sale = formData.amount * coinValue;
+    const totalBuy = formData.amount * coinValue;
 
-    if (sale > Number(user?.sale)) {
+    if (totalBuy > Number(user?.sale)) {
       setLoading(false);
       setErrorMessage("Saldo insuficiente!");
       return;
     }
 
-    const total = Number(user?.sale) - formData.amount * (coinValue ?? 0);
+    const totalSale = Number(user?.sale) - formData.amount * (coinValue ?? 0);
 
-    const order = {
-      amount: formData.amount,
-      coin: title,
-      date: dateNow(),
-      operation: "buy",
-    };
-
+    const order = [
+      {
+        amount: formData.amount,
+        coin: title,
+        date: dateNow(),
+        operation: "buy",
+        total: totalBuy,
+      },
+    ];
     try {
       firebaseRef
         .database()
         .ref("user")
         .update({
-          sale: total,
+          sale: totalSale,
           [title.toLocaleLowerCase()]:
             Number(formData.amount) + (coinAmount ?? 0),
         })
