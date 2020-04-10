@@ -8,7 +8,7 @@ import { operation } from "../../components/RecentTransactions";
 import { Title } from "../../components/Title";
 import { Wallet } from "../../components/Wallet";
 import firebaseRef from "../../service/firebase";
-import { dateNow, dateNowEUA } from "../../utils/formatters";
+import { dateBitcoin, dateBrita, dateNow } from "../../utils/formatters";
 
 const { confirm } = Modal;
 
@@ -45,16 +45,24 @@ export const WalletComponent = () => {
   };
 
   const getCoins = () => {
-    const initialDate = dateNowEUA(0);
-    const finalDate = dateNowEUA(1);
+    const initialDateBrita = dateBrita(0);
+    const finalDateBrita = dateBrita(1);
 
+    // brtia
     axios
       .get(
-        `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@dataInicial='${initialDate}'&@dataFinalCotacao='${finalDate}'&$top=100&$format=json&$select=cotacaoCompra`
+        `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@dataInicial='${initialDateBrita}'&@dataFinalCotacao='${finalDateBrita}'&$top=100&$format=json&$select=cotacaoCompra`
       )
-      .then((response: any) =>
+      .then((response) =>
         setBrita(response.data.value[0].cotacaoCompra.toFixed(2))
       );
+
+    // bitcoin
+    axios
+      .get(
+        `https://economia.awesomeapi.com.br/BTC-BRL/?start_date=${dateBitcoin()}&end_date=${dateBitcoin()}`
+      )
+      .then((response) => setBitcoin(response.data[0].bid));
   };
 
   const charts = [
@@ -88,8 +96,16 @@ export const WalletComponent = () => {
   ];
 
   const dataBitcoin = [
-    { title: "Valor Patrimonial", value: "25.0" },
-    { title: "Variação Patrimonial", value: "7.0" },
+    {
+      title: "Valor Patrimonial",
+      value: (Number(user?.sale ?? 0) + (user?.bitcoin ?? 0) * bitcoin).toFixed(
+        2
+      ),
+    },
+    {
+      title: "Total em Bitcoin",
+      value: ((user?.bitcoin ?? 0) * bitcoin).toFixed(2),
+    },
     { title: "Saldo", value: user?.sale },
   ];
 
@@ -101,8 +117,6 @@ export const WalletComponent = () => {
     { title: "Total em Brita", value: ((user?.brita ?? 0) * brita).toFixed(2) },
     { title: "Saldo", value: user?.sale },
   ];
-
-  console.log(user);
 
   const formModalBitcoin = {
     errorMessage,

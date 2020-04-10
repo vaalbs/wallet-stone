@@ -14,7 +14,7 @@ export const dateNow = () => {
   return localdate;
 };
 
-export const dateNowEUA = (day: number) => {
+export const dateBrita = (day: number) => {
   var dNow = new Date();
   var localdate =
     dNow.getMonth() +
@@ -22,6 +22,18 @@ export const dateNowEUA = (day: number) => {
     (dNow.getDate() - 2 + day) +
     "-" +
     dNow.getFullYear();
+
+  return localdate;
+};
+
+export const dateBitcoin = () => {
+  var dNow = new Date();
+  var localdate =
+    dNow.getFullYear() +
+    "" +
+    dNow.getMonth().toString().padStart(2, "0") +
+    "" +
+    dNow.getDate().toString().padStart(2, "0");
 
   return localdate;
 };
