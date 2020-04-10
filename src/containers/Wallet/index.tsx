@@ -131,7 +131,8 @@ export const WalletComponent = () => {
     coinValue: bitcoin,
     onBuy: (formData: IFormFields) =>
       onBuy(formData, bitcoin, "Bitcoin", user?.bitcoin),
-    onSell: () => onSell,
+    onSell: (formData: IFormFields) =>
+      onSell(formData, bitcoin, "Bitcoin", user?.bitcoin),
     setShowOnBuy: () => setShowOnBuy(false),
     setShowOnSell: () => setShowOnSell(false),
     showConfirm: () => showConfirm(),
@@ -145,7 +146,8 @@ export const WalletComponent = () => {
     coinValue: brita,
     onBuy: (formData: IFormFields) =>
       onBuy(formData, brita, "Brita", user?.brita),
-    onSell: () => onSell,
+    onSell: (formData: IFormFields) =>
+      onSell(formData, brita, "Brita", user?.brita),
     setShowOnBuy: () => setShowOnBuy(false),
     setShowOnSell: () => setShowOnSell(false),
     showConfirm: () => showConfirm(),
@@ -238,8 +240,53 @@ export const WalletComponent = () => {
     }
   };
 
-  const onSell = (formData: IFormFields) => {
-    console.log(formData);
+  const onSell = (
+    formData: IFormFields,
+    coinValue: number,
+    title: string,
+    coinAmount?: number
+  ) => {
+    setLoading(true);
+
+    const total = formData.amount * (coinValue ?? 0);
+
+    if (formData.amount > (coinAmount ?? 0)) {
+      setLoading(false);
+      setErrorMessage("Você não possui essa quantidade!");
+      return;
+    }
+
+    const totalSell = Number(user?.sale) + formData.amount * (coinValue ?? 0);
+
+    const order = [
+      {
+        amount: formData.amount,
+        coin: title,
+        date: dateNow(),
+        operation: "sell",
+        total: total,
+      },
+    ];
+    try {
+      firebaseRef
+        .database()
+        .ref("user")
+        .update({
+          sale: totalSell,
+          [title.toLocaleLowerCase()]:
+            (coinAmount ?? 0) - Number(formData.amount),
+        })
+        .then(() => firebaseRef.database().ref("user/orders").push(order));
+
+      setShowOnSell(false);
+      message.success("Venda realizada com sucesso!");
+    } catch (error) {
+      message.error(
+        error.message || "Oops! Algo deu errado. Tente novamente mais tarde."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const tabs = [
