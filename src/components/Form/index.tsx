@@ -4,35 +4,25 @@ import { useForm } from "react-hook-form";
 import { AlertWrapper } from "../../styles/Antd/Alert/styled";
 import { CoinValue, FormWrapper, Input, Label, Paragraph } from "./styled";
 
-export interface IFormModal {
-  errorMessage: string;
-  loading: boolean;
-  showOnBuy: boolean;
-  showOnSell: boolean;
-  coinValue?: number;
-  onBuy: (formData: IFormFields) => void;
-  onSell: (formData: IFormFields) => void;
-  setShowOnBuy: (value: boolean) => void;
-  setShowOnSell: (value: boolean) => void;
-  showConfirm: () => void;
-}
-
 export interface IFormFields {
   amount: number;
 }
 
-export interface IProps {
-  button: string;
+export interface IFormModal {
+  buttonModalName: string;
   errorMessage: string;
   loading: boolean;
   showModal: boolean;
   title: string;
+  buttonIcon?: any;
+  buttonName?: string;
   coinValue?: number;
   onSubmit: (formData: IFormFields) => void;
   setShowModal: (value: boolean) => void;
+  onClick?: () => void;
 }
 
-export const Form = (props: IProps) => {
+export const Form = (props: IFormModal) => {
   const { register, handleSubmit, errors, watch } = useForm<IFormFields>();
   const values = watch("amount");
 
@@ -41,13 +31,13 @@ export const Form = (props: IProps) => {
       okButtonProps={{ htmlType: "submit" }}
       onOk={handleSubmit(props.onSubmit)}
       visible={props.showModal}
-      title={`${props.title}`}
+      title={props.title}
       closable={false}
       maskClosable={true}
       confirmLoading={props.loading}
       cancelText="Cancelar"
       onCancel={() => props.setShowModal(false)}
-      okText={`${props.button}`}
+      okText={`${props.buttonModalName}`}
       destroyOnClose={true}
     >
       <FormWrapper>

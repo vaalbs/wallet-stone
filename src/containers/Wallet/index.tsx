@@ -1,4 +1,4 @@
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { DollarCircleOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { message, Modal } from "antd";
 import axios from "axios";
 import React from "react";
@@ -23,8 +23,14 @@ export const WalletComponent = () => {
   const ultimoMes = React.createRef<HTMLCanvasElement>();
   const mes2 = React.createRef<HTMLCanvasElement>();
 
-  const [showOnBuy, setShowOnBuy] = React.useState(false);
-  const [showOnSell, setShowOnSell] = React.useState(false);
+  const [showOnBuyBitcoin, setShowOnBuyBitcoin] = React.useState(false);
+  const [showOnBuyBrita, setShowOnBuyBrita] = React.useState(false);
+
+  const [showOnBuyWithBitcoin, setShowOnBuyWithBitcoin] = React.useState(false);
+  const [showOnBuyWithBrita, setShowOnBuyWithBrita] = React.useState(false);
+
+  const [showOnSellBitcoin, setShowOnSellBitcoin] = React.useState(false);
+  const [showOnSellBrita, setShowOnSellBrita] = React.useState(false);
 
   const [loading, setLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
@@ -160,65 +166,125 @@ export const WalletComponent = () => {
     { title: "Saldo", value: Number(user?.sale).toFixed(2) },
   ];
 
-  const formModalBitcoin = {
-    errorMessage,
-    showOnBuy,
-    showOnSell,
-    loading,
-    coinValue: bitcoin,
-    onBuy: (formData: IFormFields) =>
-      onBuy(formData, bitcoin, "Bitcoin", user?.bitcoin),
-    onSell: (formData: IFormFields) =>
-      onSell(formData, bitcoin, "Bitcoin", user?.bitcoin),
-    setShowOnBuy: () => setShowOnBuy(false),
-    setShowOnSell: () => setShowOnSell(false),
-    showConfirm: () => showConfirm(),
-  };
-
-  const formModalBrita = {
-    errorMessage,
-    showOnBuy,
-    showOnSell,
-    loading,
-    coinValue: brita,
-    onBuy: (formData: IFormFields) =>
-      onBuy(formData, brita, "Brita", user?.brita),
-    onSell: (formData: IFormFields) =>
-      onSell(formData, brita, "Brita", user?.brita),
-    setShowOnBuy: () => setShowOnBuy(false),
-    setShowOnSell: () => setShowOnSell(false),
-    showConfirm: () => showConfirm(),
-  };
-
-  const buttons = {
-    onBuy: () => {
-      setShowOnBuy(true);
-      setErrorMessage("");
+  const formModalBitcoin = [
+    {
+      buttonName: "Comprar",
+      buttonModalName: "Comprar",
+      errorMessage,
+      loading,
+      showModal: showOnBuyBitcoin,
+      title: "Comprar Bitcoin",
+      buttonIcon: <ShoppingCartOutlined />,
+      coinValue: bitcoin,
+      onSubmit: (formData: IFormFields) =>
+        onBuy(formData, bitcoin, "Bitcoin", setShowOnBuyBitcoin, user?.bitcoin),
+      setShowModal: () => setShowOnBuyBitcoin(false),
+      onClick: () => {
+        setShowOnBuyBitcoin(true);
+        setErrorMessage("");
+      },
     },
-    onSell: () => {
-      setShowOnSell(true);
-      setErrorMessage("");
+    {
+      buttonName: "Vender",
+      buttonModalName: "Vender",
+      errorMessage,
+      loading,
+      showModal: showOnSellBitcoin,
+      title: "Vender Bitcoin",
+      buttonIcon: <DollarCircleOutlined />,
+      coinValue: bitcoin,
+      onSubmit: (formData: IFormFields) =>
+        onSell(
+          formData,
+          bitcoin,
+          "Bitcoin",
+          setShowOnBuyBitcoin,
+          user?.bitcoin
+        ),
+      setShowModal: () => setShowOnSellBitcoin(false),
+      onClick: () => {
+        setShowOnSellBitcoin(true);
+        setErrorMessage("");
+      },
     },
-  };
+    {
+      buttonName: "Comprar com Brita",
+      buttonModalName: "Comprar",
+      errorMessage,
+      loading,
+      showModal: showOnBuyWithBrita,
+      title: "Comprar Bitcoin usando Brita",
+      buttonIcon: <ShoppingCartOutlined />,
+      coinValue: bitcoin,
+      onSubmit: (formData: IFormFields) =>
+        onBuy(formData, bitcoin, "Bitcoin", setShowOnBuyBitcoin, user?.bitcoin),
+      setShowModal: () => setShowOnBuyWithBrita(false),
+      onClick: () => {
+        setShowOnBuyWithBrita(true);
+        setErrorMessage("");
+      },
+    },
+  ];
 
-  const showConfirm = () => {
-    confirm({
-      title: "Tem certeza que deseja trocar as moedas?",
-      icon: <ExclamationCircleOutlined />,
-      okText: "Sim",
-      okButtonProps: { loading },
-      cancelText: "Não",
-      onOk: () => onChangeCoins(),
-      onCancel() {},
-    });
-  };
-
-  const onChangeCoins = () => {};
+  const formModalBrita = [
+    {
+      buttonName: "Comprar",
+      buttonModalName: "Comprar",
+      errorMessage,
+      loading,
+      showModal: showOnBuyBrita,
+      title: "Comprar Brita",
+      buttonIcon: <ShoppingCartOutlined />,
+      coinValue: brita,
+      onSubmit: (formData: IFormFields) =>
+        onBuy(formData, brita, "Brita", setShowOnBuyBrita, user?.brita),
+      setShowModal: () => setShowOnBuyBrita(false),
+      onClick: () => {
+        setShowOnBuyBrita(true);
+        setErrorMessage("");
+      },
+    },
+    {
+      buttonName: "Vender",
+      buttonModalName: "Vender",
+      errorMessage,
+      loading,
+      showModal: showOnSellBrita,
+      title: "Vender Brita",
+      buttonIcon: <DollarCircleOutlined />,
+      coinValue: brita,
+      onSubmit: (formData: IFormFields) =>
+        onSell(formData, brita, "Brita", setShowOnBuyBrita, user?.brita),
+      setShowModal: () => setShowOnSellBrita(false),
+      onClick: () => {
+        setShowOnSellBrita(true);
+        setErrorMessage("");
+      },
+    },
+    {
+      buttonName: "Comprar com Bitcoin",
+      buttonModalName: "Comprar",
+      errorMessage,
+      loading,
+      showModal: showOnBuyWithBitcoin,
+      title: "Comprar Brita usando Bitcoin",
+      buttonIcon: <ShoppingCartOutlined />,
+      coinValue: brita,
+      onSubmit: (formData: IFormFields) =>
+        onBuy(formData, brita, "Brita", setShowOnBuyBrita, user?.brita),
+      setShowModal: () => setShowOnBuyWithBitcoin(false),
+      onClick: () => {
+        setShowOnBuyWithBitcoin(true);
+        setErrorMessage("");
+      },
+    },
+  ];
 
   const onBuy = (
     formData: IFormFields,
     coinValue: number,
     title: string,
+    setShowModal: (value: boolean) => void,
     coinAmount?: number
   ) => {
     setLoading(true);
@@ -253,7 +319,7 @@ export const WalletComponent = () => {
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order));
 
-      setShowOnBuy(false);
+      setShowModal(false);
       message.success("Compra realizada com sucesso!");
     } catch (error) {
       message.error(
@@ -268,6 +334,7 @@ export const WalletComponent = () => {
     formData: IFormFields,
     coinValue: number,
     title: string,
+    setShowModal: (value: boolean) => void,
     coinAmount?: number
   ) => {
     setLoading(true);
@@ -302,7 +369,7 @@ export const WalletComponent = () => {
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order));
 
-      setShowOnSell(false);
+      setShowModal(false);
       message.success("Venda realizada com sucesso!");
     } catch (error) {
       message.error(
@@ -317,7 +384,6 @@ export const WalletComponent = () => {
     {
       tabTitle: "Bitcoin",
       values: dataBitcoin,
-      buttons,
       charts,
       transactions: orderBitcoin,
       formModal: formModalBitcoin,
@@ -325,7 +391,6 @@ export const WalletComponent = () => {
     {
       tabTitle: "Brita",
       values: dataBrita,
-      buttons,
       charts: charts2,
       transactions: orderBrita,
       formModal: formModalBrita,

@@ -1,13 +1,11 @@
 import React from "react";
+import { ButtonList } from "../../Button-List";
+import { IFormModal } from "../../Form";
 import {
   BlockWrapper,
-  Button,
-  ButtonWrapper,
-  BuyIcon,
   HeaderWrapper,
   ListWrapper,
   Prefix,
-  SellIcon,
   Title,
   Value,
 } from "./styled";
@@ -17,14 +15,9 @@ export interface IValue {
   value?: string;
 }
 
-export interface IButtons {
-  onBuy: () => void;
-  onSell: () => void;
-}
-
 interface IProps {
   options: IValue[];
-  buttons: IButtons;
+  formModal: IFormModal[];
 }
 
 export const Header = (props: IProps) => {
@@ -41,14 +34,7 @@ export const Header = (props: IProps) => {
           </BlockWrapper>
         ))}
       </ListWrapper>
-      <ButtonWrapper>
-        <Button onClick={props.buttons.onBuy}>
-          <BuyIcon /> Comprar
-        </Button>
-        <Button onClick={props.buttons.onSell}>
-          <SellIcon /> Vender
-        </Button>
-      </ButtonWrapper>
+      <ButtonList formModal={props.formModal} />
     </HeaderWrapper>
   );
 };
