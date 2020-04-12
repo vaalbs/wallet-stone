@@ -51,7 +51,7 @@ export const RecentTransactions = (props: IProps) => {
                 )}
                 <Amount>
                   {transaction.amount > 1
-                    ? `${transaction.amount} itens`
+                    ? `${Number(transaction.amount).toFixed(2)} itens`
                     : `${transaction.amount} item`}
                 </Amount>
                 <Value>R$ {transaction.total.toFixed(2)}</Value>

@@ -1,5 +1,5 @@
 import { DollarCircleOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import { message, Modal } from "antd";
+import { message } from "antd";
 import axios from "axios";
 import React from "react";
 import { IFormFields } from "../../components/Form";
@@ -8,9 +8,12 @@ import { ITransaction } from "../../components/Recent-Transactions";
 import { Title } from "../../components/Title";
 import { Wallet } from "../../components/Wallet";
 import firebaseRef from "../../service/firebase";
-import { dateBitcoin, dateBrita, dateNow } from "../../utils/formatters";
-
-const { confirm } = Modal;
+import {
+  dateBitcoin,
+  dateBrita,
+  dateNow,
+  monthLabels,
+} from "../../utils/formatters";
 
 interface IUser {
   sale: string;
@@ -20,8 +23,14 @@ interface IUser {
 }
 
 export const WalletComponent = () => {
-  const ultimoMes = React.createRef<HTMLCanvasElement>();
-  const mes2 = React.createRef<HTMLCanvasElement>();
+  const lastMonth = React.createRef<HTMLCanvasElement>();
+  const antepenultimateDays = React.createRef<HTMLCanvasElement>();
+  const [lastMonthDays, setLastMonthDays] = React.useState<number[]>();
+  const [
+    antepenultimateMonthDays,
+    setAntepenultimateMonthsDays,
+  ] = React.useState<number[]>();
+  const [antepenultimateMonth, setAntepenultimateMonth] = React.useState("");
 
   const [showOnBuyBitcoin, setShowOnBuyBitcoin] = React.useState(false);
   const [showOnBuyBrita, setShowOnBuyBrita] = React.useState(false);
@@ -50,6 +59,40 @@ export const WalletComponent = () => {
     getOrdersBitcoin();
     getOrdersBrita();
   }, [user?.orders]);
+
+  React.useEffect(() => {
+    getDays(0, setLastMonthDays);
+    getDays(1, setAntepenultimateMonthsDays);
+    getMonth();
+  }, []);
+
+  const getDays = (
+    month: number,
+    setDays: (value: React.SetStateAction<number[] | undefined>) => void
+  ) => {
+    const date = new Date();
+    const days = new Date(
+      date.getFullYear(),
+      date.getMonth() - month,
+      0
+    ).getDate();
+
+    let day = [];
+    for (let i = 1; i <= days; i++) {
+      day.push(i);
+    }
+
+    setDays(day);
+  };
+
+  const getMonth = () => {
+    const date = new Date();
+    const antepenultimate = date.getMonth() - 1;
+
+    setAntepenultimateMonth(monthLabels[antepenultimate]);
+  };
+
+  console.log(antepenultimateMonth);
 
   const getData = () => {
     try {
@@ -109,33 +152,33 @@ export const WalletComponent = () => {
     }
   };
 
-  const charts = [
+  const chartsBitcoin = [
     {
-      labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+      labels: lastMonthDays,
       data: [12, 19, 3, 5, 4, 1],
-      tabTitle: "Janeiro",
-      reference: ultimoMes,
+      tabTitle: "Último mês",
+      reference: lastMonth,
     },
     {
-      labels: ["Yellow", "Purple", "Red", "Orange", "Blue", "Green"],
+      labels: antepenultimateMonthDays,
       data: [7, 9, 1, 15, 9, 10],
-      tabTitle: "Março",
-      reference: mes2,
+      tabTitle: antepenultimateMonth,
+      reference: antepenultimateDays,
     },
   ];
 
-  const charts2 = [
+  const chartBrita = [
     {
-      labels: ["Green", "Yellow", "Pink", "Red", "Gray", "Blue"],
+      labels: lastMonthDays,
       data: [12, 19, 3, 5, 4, 1],
-      tabTitle: "Janeiro",
-      reference: ultimoMes,
+      tabTitle: "Último mês",
+      reference: lastMonth,
     },
     {
-      labels: ["Blue", "Gray", "Red", "Pink", "Yellow", "Green"],
+      labels: antepenultimateMonthDays,
       data: [7, 9, 1, 15, 9, 10],
-      tabTitle: "Março",
-      reference: mes2,
+      tabTitle: antepenultimateMonth,
+      reference: antepenultimateDays,
     },
   ];
 
@@ -198,7 +241,7 @@ export const WalletComponent = () => {
           formData,
           bitcoin,
           "Bitcoin",
-          setShowOnBuyBitcoin,
+          setShowOnSellBitcoin,
           user?.bitcoin
         ),
       setShowModal: () => setShowOnSellBitcoin(false),
@@ -263,7 +306,7 @@ export const WalletComponent = () => {
       buttonIcon: <DollarCircleOutlined />,
       coinValue: brita,
       onSubmit: (formData: IFormFields) =>
-        onSell(formData, brita, "Brita", setShowOnBuyBrita, user?.brita),
+        onSell(formData, brita, "Brita", setShowOnSellBrita, user?.brita),
       setShowModal: () => setShowOnSellBrita(false),
       onClick: () => {
         setShowOnSellBrita(true);
@@ -332,8 +375,9 @@ export const WalletComponent = () => {
         .ref("user")
         .update({
           sale: totalSale,
-          [title.toLocaleLowerCase()]:
-            Number(formData.amount) + (coinAmount ?? 0),
+          [title.toLocaleLowerCase()]: (
+            Number(formData.amount) + (coinAmount ?? 0)
+          ).toFixed(2),
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order));
 
@@ -382,8 +426,9 @@ export const WalletComponent = () => {
         .ref("user")
         .update({
           sale: totalSell,
-          [title.toLocaleLowerCase()]:
-            (coinAmount ?? 0) - Number(formData.amount),
+          [title.toLocaleLowerCase()]: (
+            (coinAmount ?? 0) - Number(formData.amount)
+          ).toFixed(2),
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order));
 
@@ -427,8 +472,6 @@ export const WalletComponent = () => {
       return;
     }
 
-    console.log(amount);
-
     const order = [
       {
         amount: formData.amount,
@@ -455,9 +498,12 @@ export const WalletComponent = () => {
         .ref("user")
         .update({
           sale: totalBuy,
-          [title.toLocaleLowerCase()]:
-            (coinAmount ?? 0) + Number(formData.amount),
-          [titleWith.toLocaleLowerCase()]: (coinAmountWith ?? 0) - amount,
+          [title.toLocaleLowerCase()]: (
+            (coinAmount ?? 0) + Number(formData.amount)
+          ).toFixed(2),
+          [titleWith.toLocaleLowerCase()]: (
+            (coinAmountWith ?? 0) - amount
+          ).toFixed(2),
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order))
         .then(() => firebaseRef.database().ref("user/orders").push(orderWith));
@@ -477,14 +523,14 @@ export const WalletComponent = () => {
     {
       tabTitle: "Bitcoin",
       values: dataBitcoin,
-      charts,
+      charts: chartsBitcoin,
       transactions: orderBitcoin,
       formModal: formModalBitcoin,
     },
     {
       tabTitle: "Brita",
       values: dataBrita,
-      charts: charts2,
+      charts: chartBrita,
       transactions: orderBrita,
       formModal: formModalBrita,
     },

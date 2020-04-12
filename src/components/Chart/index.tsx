@@ -4,7 +4,7 @@ import { TabPaneWrapper } from "../../styles/Antd/Tab/styled";
 import { ChartWrapper, Tab } from "./styled";
 
 export interface IChart {
-  labels: string[];
+  labels?: number[];
   data: number[];
   tabTitle: string;
   reference: React.RefObject<HTMLCanvasElement>;
