@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, IFormModal } from "../Form";
-import { Button, ButtonName, ButtonWrapper } from "./styled";
+import { Button, ButtonName, ButtonsList, ButtonWrapper } from "./styled";
 
 interface IProps {
   formModal: IFormModal[];
@@ -9,8 +9,8 @@ interface IProps {
 export const ButtonList = (props: IProps) => {
   return (
     <ButtonWrapper>
-      {props.formModal.map((fm) => (
-        <>
+      {props.formModal.map((fm, index) => (
+        <ButtonsList key={index}>
           <Button onClick={fm.onClick}>
             {fm.buttonIcon} <ButtonName>{fm.buttonName}</ButtonName>
           </Button>
@@ -27,7 +27,7 @@ export const ButtonList = (props: IProps) => {
             setShowModal={fm.setShowModal}
             onClick={fm.onClick}
           />
-        </>
+        </ButtonsList>
       ))}
     </ButtonWrapper>
   );

@@ -217,7 +217,16 @@ export const WalletComponent = () => {
       buttonIcon: <ShoppingCartOutlined />,
       coinValue: bitcoin,
       onSubmit: (formData: IFormFields) =>
-        onBuy(formData, bitcoin, "Bitcoin", setShowOnBuyBitcoin, user?.bitcoin),
+        onBuyWith(
+          formData,
+          bitcoin,
+          brita,
+          "Bitcoin",
+          "Brita",
+          setShowOnBuyWithBrita,
+          user?.bitcoin,
+          user?.brita
+        ),
       setShowModal: () => setShowOnBuyWithBrita(false),
       onClick: () => {
         setShowOnBuyWithBrita(true);
@@ -271,7 +280,16 @@ export const WalletComponent = () => {
       buttonIcon: <ShoppingCartOutlined />,
       coinValue: brita,
       onSubmit: (formData: IFormFields) =>
-        onBuy(formData, brita, "Brita", setShowOnBuyBrita, user?.brita),
+        onBuyWith(
+          formData,
+          brita,
+          bitcoin,
+          "Brita",
+          "Bitcoin",
+          setShowOnBuyWithBitcoin,
+          user?.brita,
+          user?.bitcoin
+        ),
       setShowModal: () => setShowOnBuyWithBitcoin(false),
       onClick: () => {
         setShowOnBuyWithBitcoin(true);
@@ -319,13 +337,13 @@ export const WalletComponent = () => {
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order));
 
-      setShowModal(false);
       message.success("Compra realizada com sucesso!");
     } catch (error) {
       message.error(
         error.message || "Oops! Algo deu errado. Tente novamente mais tarde."
       );
     } finally {
+      setShowModal(false);
       setLoading(false);
     }
   };
@@ -369,13 +387,88 @@ export const WalletComponent = () => {
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order));
 
-      setShowModal(false);
       message.success("Venda realizada com sucesso!");
     } catch (error) {
       message.error(
         error.message || "Oops! Algo deu errado. Tente novamente mais tarde."
       );
     } finally {
+      setShowModal(false);
+      setLoading(false);
+    }
+  };
+
+  const onBuyWith = (
+    formData: IFormFields,
+    coinValue: number,
+    coinBuyWith: number,
+    title: string,
+    titleWith: string,
+    setShowModal: (value: boolean) => void,
+    coinAmount?: number,
+    coinAmountWith?: number
+  ) => {
+    setLoading(true);
+
+    const totalBuy = formData.amount * coinValue;
+    const totalCoin = coinBuyWith * (coinAmount ?? 0);
+
+    if (totalBuy > totalCoin) {
+      setLoading(false);
+      setErrorMessage("Saldo insuficiente!");
+      return;
+    }
+
+    const amount = totalBuy / totalCoin;
+
+    if (amount < 0.1) {
+      setLoading(false);
+      setErrorMessage("Quantidade insuficiente! Quantidade mínima de 0.1.");
+      return;
+    }
+
+    console.log(amount);
+
+    const order = [
+      {
+        amount: formData.amount,
+        coin: title,
+        dateHour: dateNow(),
+        operation: "buy",
+        total: amount * coinValue,
+      },
+    ];
+
+    const orderWith = [
+      {
+        amount: Number(amount).toFixed(2),
+        coin: titleWith,
+        dateHour: dateNow(),
+        operation: "sell",
+        total: amount * coinBuyWith,
+      },
+    ];
+
+    try {
+      firebaseRef
+        .database()
+        .ref("user")
+        .update({
+          sale: totalBuy,
+          [title.toLocaleLowerCase()]:
+            (coinAmount ?? 0) + Number(formData.amount),
+          [titleWith.toLocaleLowerCase()]: (coinAmountWith ?? 0) - amount,
+        })
+        .then(() => firebaseRef.database().ref("user/orders").push(order))
+        .then(() => firebaseRef.database().ref("user/orders").push(orderWith));
+
+      message.success("Compra realizada com sucesso!");
+    } catch (error) {
+      message.error(
+        error.message || "Oops! Algo deu errado. Tente novamente mais tarde."
+      );
+    } finally {
+      setShowModal(false);
       setLoading(false);
     }
   };

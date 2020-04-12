@@ -53,7 +53,7 @@ export const Form = (props: IFormModal) => {
           name="amount"
           ref={register({
             required: { value: true, message: "Informe a quantidade." },
-            min: { value: 1, message: "Quantidade mínima de 1." },
+            min: { value: 0.1, message: "Quantidade mínima de 0.1." },
           })}
         />
 

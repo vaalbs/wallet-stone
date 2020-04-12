@@ -9,7 +9,7 @@ export const HeaderWrapper = styled.section`
 
 export const ListWrapper = styled.div`
   align-items: flex-start;
-  column-gap: 28px;
+  column-gap: 24px;
   display: grid;
   grid-template-columns: auto auto auto;
 `;
