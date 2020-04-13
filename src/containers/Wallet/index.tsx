@@ -12,6 +12,7 @@ import {
   dateBitcoin,
   dateBrita,
   dateNow,
+  daysWithoutWekeend,
   monthLabels,
 } from "../../utils/formatters";
 
@@ -25,12 +26,41 @@ interface IUser {
 export const WalletComponent = () => {
   const lastMonth = React.createRef<HTMLCanvasElement>();
   const antepenultimateDays = React.createRef<HTMLCanvasElement>();
-  const [lastMonthDays, setLastMonthDays] = React.useState<number[]>();
+
+  const [lastMonthDaysBrita, setLastMonthDaysBrita] = React.useState<
+    number[]
+  >();
+  const [lastMonthDaysBitcoin, setLastMonthDaysBitcoin] = React.useState<
+    number[]
+  >();
+
   const [
-    antepenultimateMonthDays,
-    setAntepenultimateMonthsDays,
+    antepenultimateMonthDaysBrita,
+    setAntepenultimateMonthsDaysBrita,
   ] = React.useState<number[]>();
+  const [
+    antepenultimateMonthDaysBitcoin,
+    setAntepenultimateMonthsDaysBitcoin,
+  ] = React.useState<number[]>();
+
   const [antepenultimateMonth, setAntepenultimateMonth] = React.useState("");
+
+  const [lastMonthChartDataBrita, setLastMonthChartDataBrita] = React.useState<
+    number[]
+  >();
+  const [
+    antepenultimateMonthChartDataBrita,
+    setAntepenultimateMonthChartDataBrita,
+  ] = React.useState<number[]>();
+
+  const [
+    lastMonthChartDataBitcoin,
+    setLastMonthChartDataBitcoin,
+  ] = React.useState<number[]>();
+  const [
+    antepenultimateMonthChartDataBitcoin,
+    setAntepenultimateMonthChartDataBitcoin,
+  ] = React.useState<number[]>();
 
   const [showOnBuyBitcoin, setShowOnBuyBitcoin] = React.useState(false);
   const [showOnBuyBrita, setShowOnBuyBrita] = React.useState(false);
@@ -61,19 +91,37 @@ export const WalletComponent = () => {
   }, [user?.orders]);
 
   React.useEffect(() => {
-    getDays(0, setLastMonthDays);
-    getDays(1, setAntepenultimateMonthsDays);
+    // ultimo mes
+    getDays(1, setLastMonthDaysBrita, setLastMonthDaysBitcoin);
+    getCoinsByDate(0, setLastMonthChartDataBrita, setLastMonthChartDataBitcoin);
+    // penultimo mes
+    getDays(
+      2,
+      setAntepenultimateMonthsDaysBrita,
+      setAntepenultimateMonthsDaysBitcoin
+    );
+    getCoinsByDate(
+      1,
+      setAntepenultimateMonthChartDataBrita,
+      setAntepenultimateMonthChartDataBitcoin
+    );
+
     getMonth();
   }, []);
 
   const getDays = (
     month: number,
-    setDays: (value: React.SetStateAction<number[] | undefined>) => void
+    setDaysBrita: (value: React.SetStateAction<number[] | undefined>) => void,
+    setDaysBitcoin: (value: React.SetStateAction<number[] | undefined>) => void
   ) => {
     const date = new Date();
+    const months = date.getMonth() - month;
+    const year = date.getFullYear();
+    setDaysBrita(daysWithoutWekeend(months, year));
+
     const days = new Date(
       date.getFullYear(),
-      date.getMonth() - month,
+      date.getMonth() + 1 - month,
       0
     ).getDate();
 
@@ -82,7 +130,7 @@ export const WalletComponent = () => {
       day.push(i);
     }
 
-    setDays(day);
+    setDaysBitcoin(day);
   };
 
   const getMonth = () => {
@@ -91,8 +139,6 @@ export const WalletComponent = () => {
 
     setAntepenultimateMonth(monthLabels[antepenultimate]);
   };
-
-  console.log(antepenultimateMonth);
 
   const getData = () => {
     try {
@@ -120,6 +166,53 @@ export const WalletComponent = () => {
         `https://economia.awesomeapi.com.br/BTC-BRL/?start_date=${dateBitcoin()}&end_date=${dateBitcoin()}`
       )
       .then((response) => setBitcoin(response.data[0].bid));
+  };
+
+  const getCoinsByDate = (
+    month: number,
+    setDataByDateBrita: (
+      value: React.SetStateAction<number[] | undefined>
+    ) => void,
+    setDataByDateBitcoin: (
+      value: React.SetStateAction<number[] | undefined | any>
+    ) => void
+  ) => {
+    const date = new Date();
+    const months = date.getMonth() - month;
+    const year = date.getFullYear();
+    const days = new Date(
+      date.getFullYear(),
+      date.getMonth() - month,
+      0
+    ).getDate();
+
+    // brtia
+    axios
+      .get(
+        `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@dataInicial='${months}-01-${year}'&@dataFinalCotacao='${months}-${days}-${year}'&$top=100&$format=json&$select=cotacaoCompra`
+      )
+      .then((response) =>
+        response.data.value.map((data: any) => data.cotacaoCompra)
+      )
+      .then((response) => setDataByDateBrita(response));
+
+    // bitcoin
+    axios
+      .get(
+        `https://economia.awesomeapi.com.br/json/daily/BTC-BRL/${
+          days + 1
+        }?start_date=${year}${months
+          .toString()
+          .padStart(2, "0")}01&end_date=${year}${months
+          .toString()
+          .padStart(2, "0")}${days}`
+      )
+      .then((response) => {
+        const lastDay = response.data.shift();
+        const data = response.data.map((data: any) => data.bid);
+        data.push(lastDay.bid);
+        setDataByDateBitcoin(data);
+      });
   };
 
   const getOrdersBitcoin = () => {
@@ -154,14 +247,14 @@ export const WalletComponent = () => {
 
   const chartsBitcoin = [
     {
-      labels: lastMonthDays,
-      data: [12, 19, 3, 5, 4, 1],
+      labels: lastMonthDaysBitcoin,
+      data: lastMonthChartDataBitcoin,
       tabTitle: "Último mês",
       reference: lastMonth,
     },
     {
-      labels: antepenultimateMonthDays,
-      data: [7, 9, 1, 15, 9, 10],
+      labels: antepenultimateMonthDaysBitcoin,
+      data: antepenultimateMonthChartDataBitcoin,
       tabTitle: antepenultimateMonth,
       reference: antepenultimateDays,
     },
@@ -169,14 +262,14 @@ export const WalletComponent = () => {
 
   const chartBrita = [
     {
-      labels: lastMonthDays,
-      data: [12, 19, 3, 5, 4, 1],
+      labels: lastMonthDaysBrita,
+      data: lastMonthChartDataBrita,
       tabTitle: "Último mês",
       reference: lastMonth,
     },
     {
-      labels: antepenultimateMonthDays,
-      data: [7, 9, 1, 15, 9, 10],
+      labels: antepenultimateMonthDaysBrita,
+      data: antepenultimateMonthChartDataBrita,
       tabTitle: antepenultimateMonth,
       reference: antepenultimateDays,
     },

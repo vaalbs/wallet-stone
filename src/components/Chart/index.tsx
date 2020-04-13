@@ -5,7 +5,7 @@ import { ChartWrapper, Tab } from "./styled";
 
 export interface IChart {
   labels?: number[];
-  data: number[];
+  data?: number[];
   tabTitle: string;
   reference: React.RefObject<HTMLCanvasElement>;
 }
@@ -55,7 +55,7 @@ export const ChartComponent = (props: IProps) => {
             key={`${index}`}
             forceRender={true}
           >
-            <canvas id={`${index}`} ref={chart.reference} />
+            <canvas height="80px" id={`${index}`} ref={chart.reference} />
           </TabPaneWrapper>
         ))}
       </Tab>

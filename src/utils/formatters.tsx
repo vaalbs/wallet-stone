@@ -52,3 +52,22 @@ export const monthLabels: { [key: number]: string } = {
   11: "Novembro",
   12: "Dezembro",
 };
+
+export const daysWithoutWekeend = (month: number, year: number) => {
+  var date = new Date(year, month, 1);
+  var days = [];
+  while (date.getMonth() === month) {
+    // Exclude weekends
+    var tmpDate = new Date(date);
+    var weekDay = tmpDate.getDay(); // week day
+    var day = tmpDate.getDate(); // day
+
+    if (weekDay % 6) {
+      // exclude 0=Sunday and 6=Saturday
+      days.push(day);
+    }
+
+    date.setDate(date.getDate() + 1);
+  }
+  return days;
+};
