@@ -468,7 +468,7 @@ export const WalletComponent = () => {
 
     const total = formData.amount * (coinValue ?? 0);
 
-    if (formData.amount > (coinAmount ?? 0)) {
+    if (formData.amount > Number(coinAmount ?? 0)) {
       setLoading(false);
       setErrorMessage("Você não possui essa quantidade!");
       return;
@@ -521,7 +521,7 @@ export const WalletComponent = () => {
     setLoading(true);
 
     const totalBuy = formData.amount * coinValue;
-    const totalCoin = coinBuyWith * (coinAmount ?? 0);
+    const totalCoin = coinBuyWith * (coinAmountWith ?? 0);
 
     if (totalBuy > totalCoin) {
       setLoading(false);
