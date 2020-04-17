@@ -1,23 +1,19 @@
 import styled from "styled-components";
 
-export const HeaderWrapper = styled.section`
-  display: grid;
-  grid-gap: 16px;
-  grid-template-columns: auto auto;
-  justify-content: space-between;
-`;
+export const HeaderWrapper = styled.section``;
 
 export const ListWrapper = styled.div`
   align-items: flex-start;
-  column-gap: 16px;
+  column-gap: 24px;
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: 180px 180px 180px 180px;
+  margin-bottom: 28px;
 `;
 
 export const BlockWrapper = styled.div`
   &:first-child {
     p {
-      font-size: 24px;
+      font-size: 28px;
     }
   }
 `;
@@ -35,6 +31,7 @@ export const Value = styled.p`
   display: flex;
   font-size: 22px;
   font-weight: 600;
+  margin: 0;
 `;
 
 export const Prefix = styled.span`

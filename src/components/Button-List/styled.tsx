@@ -2,12 +2,13 @@ import styled from "styled-components";
 
 export const ButtonWrapper = styled.section`
   align-items: center;
-  column-gap: 12px;
-  display: grid;
-  grid-template-columns: auto auto auto;
+  display: flex;
+  justify-content: flex-end;
 `;
 
-export const ButtonsList = styled.div``;
+export const ButtonsList = styled.div`
+  margin-right: 16px;
+`;
 
 export const Button = styled.button`
   align-items: center;
