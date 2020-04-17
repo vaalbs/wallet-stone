@@ -62,6 +62,10 @@ export const WalletComponent = () => {
     setAntepenultimateMonthChartDataBitcoin,
   ] = React.useState<number[]>();
 
+  const [amountBitcoinByBrita, setAmountBitcoinByBrita] = React.useState<
+    number | undefined
+  >(undefined);
+
   const [showOnBuyBitcoin, setShowOnBuyBitcoin] = React.useState(false);
   const [showOnBuyBrita, setShowOnBuyBrita] = React.useState(false);
 
@@ -261,7 +265,7 @@ export const WalletComponent = () => {
       value: ((user?.bitcoin ?? 0) * bitcoin).toFixed(2),
     },
     { title: "Saldo", value: Number(user?.sale).toFixed(2) },
-    { title: "Quantidade", amount: user?.bitcoin },
+    { title: "Quantidade", amount: Number(user?.bitcoin).toFixed(2) },
   ];
 
   const dataBrita = [
@@ -271,7 +275,7 @@ export const WalletComponent = () => {
     },
     { title: "Total em Brita", value: ((user?.brita ?? 0) * brita).toFixed(2) },
     { title: "Saldo", value: Number(user?.sale).toFixed(2) },
-    { title: "Quantidade", amount: user?.brita },
+    { title: "Quantidade", amount: Number(user?.brita).toFixed(2) },
   ];
 
   const formModalBitcoin = [
@@ -324,6 +328,8 @@ export const WalletComponent = () => {
       title: "Comprar Bitcoin usando Brita",
       buttonIcon: <ShoppingCartOutlined />,
       coinValue: bitcoin,
+      coinBuyWithAmount: user?.brita,
+      coinBuyWith: brita,
       onSubmit: (formData: IFormFields) =>
         onBuyWith(
           formData,
@@ -387,6 +393,8 @@ export const WalletComponent = () => {
       title: "Comprar Brita usando Bitcoin",
       buttonIcon: <ShoppingCartOutlined />,
       coinValue: brita,
+      coinBuyWithAmount: user?.bitcoin,
+      coinBuyWith: bitcoin,
       onSubmit: (formData: IFormFields) =>
         onBuyWith(
           formData,
@@ -440,9 +448,9 @@ export const WalletComponent = () => {
         .ref("user")
         .update({
           sale: totalSale,
-          [title.toLocaleLowerCase()]: (
-            Number(formData.amount) + (coinAmount ?? 0)
-          ).toFixed(2),
+          [title.toLocaleLowerCase()]: Number(
+            Number(formData.amount) + Number(coinAmount ?? 0)
+          ),
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order));
 
@@ -491,9 +499,9 @@ export const WalletComponent = () => {
         .ref("user")
         .update({
           sale: totalSell,
-          [title.toLocaleLowerCase()]: (
-            (coinAmount ?? 0) - Number(formData.amount)
-          ).toFixed(2),
+          [title.toLocaleLowerCase()]: Number(
+            Number(coinAmount ?? 0) - Number(formData.amount)
+          ),
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order));
 
@@ -531,6 +539,8 @@ export const WalletComponent = () => {
 
     const amount = totalBuy / totalCoin;
 
+    setAmountBitcoinByBrita(amount);
+
     if (amount < 0.1) {
       setLoading(false);
       setErrorMessage("Quantidade insuficiente! Quantidade mínima de 0.1.");
@@ -563,12 +573,12 @@ export const WalletComponent = () => {
         .ref("user")
         .update({
           sale: totalBuy,
-          [title.toLocaleLowerCase()]: (
-            (coinAmount ?? 0) + Number(formData.amount)
-          ).toFixed(2),
-          [titleWith.toLocaleLowerCase()]: (
-            (coinAmountWith ?? 0) - amount
-          ).toFixed(2),
+          [title.toLocaleLowerCase()]: Number(
+            Number(coinAmount ?? 0) + Number(formData.amount)
+          ),
+          [titleWith.toLocaleLowerCase()]: Number(
+            ((coinAmountWith ?? 0) - amount).toFixed(2)
+          ),
         })
         .then(() => firebaseRef.database().ref("user/orders").push(order))
         .then(() => firebaseRef.database().ref("user/orders").push(orderWith));

@@ -23,6 +23,8 @@ export const ButtonList = (props: IProps) => {
             title={fm.title}
             buttonIcon={fm.buttonIcon}
             coinValue={fm.coinValue}
+            coinBuyWithAmount={fm.coinBuyWithAmount}
+            coinBuyWith={fm.coinBuyWith}
             onSubmit={fm.onSubmit}
             setShowModal={fm.setShowModal}
             onClick={fm.onClick}

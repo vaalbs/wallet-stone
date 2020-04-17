@@ -14,9 +14,11 @@ export interface IFormModal {
   loading: boolean;
   showModal: boolean;
   title: string;
-  buttonIcon?: any;
+  buttonIcon?: React.ReactNode;
   buttonName?: string;
   coinValue?: number;
+  coinBuyWithAmount?: number;
+  coinBuyWith?: number;
   onSubmit: (formData: IFormFields) => void;
   setShowModal: (value: boolean) => void;
   onClick?: () => void;
@@ -25,6 +27,10 @@ export interface IFormModal {
 export const Form = (props: IFormModal) => {
   const { register, handleSubmit, errors, watch } = useForm<IFormFields>();
   const values = watch("amount");
+  const totalBuy = values * (props.coinValue ? props.coinValue : 0);
+  const totalBitcoin =
+    (props.coinBuyWith ?? 0) * (props.coinBuyWithAmount ?? 0);
+  const bitcoinAmount = Number(totalBuy) / totalBitcoin;
 
   return (
     <Modal
@@ -58,12 +64,13 @@ export const Form = (props: IFormModal) => {
         />
 
         <Paragraph>
-          Total:{" "}
           <CoinValue>
-            R${" "}
-            {values
-              ? (values * (props.coinValue ? props.coinValue : 0)).toFixed(2)
-              : "0"}
+            {props.coinBuyWithAmount
+              ? `Quantidade: ${
+                  bitcoinAmount > 0 ? bitcoinAmount.toFixed(4) : 0
+                }`
+              : `Total: R$
+            ${values ? totalBuy.toFixed(2) : "0"}`}
           </CoinValue>
         </Paragraph>
 

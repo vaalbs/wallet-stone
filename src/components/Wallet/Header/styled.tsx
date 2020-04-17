@@ -6,7 +6,7 @@ export const ListWrapper = styled.div`
   align-items: flex-start;
   column-gap: 24px;
   display: grid;
-  grid-template-columns: 180px 180px 180px 180px;
+  grid-template-columns: repeat(4, 1fr);
   margin-bottom: 28px;
 `;
 

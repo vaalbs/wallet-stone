@@ -13,7 +13,7 @@ import {
 export interface IValue {
   title: string;
   value?: string;
-  amount?: number;
+  amount?: number | string;
 }
 
 interface IProps {
