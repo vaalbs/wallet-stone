@@ -1,10 +1,9 @@
 import React from "react";
 import { TabPaneWrapper, TabWrapper } from "../../styles/Antd/Tab/styled";
-import { IChart } from "../Chart";
-import { Coins } from "../Coins";
+import { ChartComponent, IChart } from "../Chart";
 import { IFormModal } from "../Form";
-import { ITransaction } from "../Recent-Transactions";
-import { IValue } from "../Wallet/Header";
+import { ITransaction, RecentTransactions } from "../Recent-Transactions";
+import { Header, IValue } from "../Wallet/Header";
 import { ContentWrapper, Line } from "./styled";
 
 interface ITabs {
@@ -25,12 +24,9 @@ export const Wallet = (props: IProps) => {
       <TabWrapper defaultActiveKey="0">
         {props.tabs.map((tab, index) => (
           <TabPaneWrapper tab={`${tab.tabTitle}`} key={`${index}`}>
-            <Coins
-              values={tab.values}
-              charts={tab.charts}
-              formModal={tab.formModal}
-              transactions={tab.transactions}
-            />
+            <Header options={tab.values} formModal={tab.formModal} />
+            <ChartComponent charts={tab.charts} />
+            <RecentTransactions transactions={tab.transactions} />
           </TabPaneWrapper>
         ))}
       </TabWrapper>

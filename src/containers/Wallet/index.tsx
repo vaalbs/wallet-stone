@@ -12,9 +12,9 @@ import {
   dateBitcoin,
   dateBrita,
   dateNow,
-  daysWithoutWekeend,
-  monthLabels,
-} from "../../utils/formatters";
+  getDays,
+  getMonth,
+} from "../../utils/date-formatters";
 
 interface IUser {
   sale: string;
@@ -36,11 +36,11 @@ export const WalletComponent = () => {
 
   const [
     antepenultimateMonthDaysBrita,
-    setAntepenultimateMonthsDaysBrita,
+    setAntepenultimateMonthDaysBrita,
   ] = React.useState<number[]>();
   const [
     antepenultimateMonthDaysBitcoin,
-    setAntepenultimateMonthsDaysBitcoin,
+    setAntepenultimateMonthDaysBitcoin,
   ] = React.useState<number[]>();
 
   const [antepenultimateMonth, setAntepenultimateMonth] = React.useState("");
@@ -94,51 +94,23 @@ export const WalletComponent = () => {
     // ultimo mes
     getDays(1, setLastMonthDaysBrita, setLastMonthDaysBitcoin);
     getCoinsByDate(0, setLastMonthChartDataBrita, setLastMonthChartDataBitcoin);
+
+    getMonth(setAntepenultimateMonth);
+  }, []);
+
+  React.useEffect(() => {
     // penultimo mes
     getDays(
       2,
-      setAntepenultimateMonthsDaysBrita,
-      setAntepenultimateMonthsDaysBitcoin
+      setAntepenultimateMonthDaysBrita,
+      setAntepenultimateMonthDaysBitcoin
     );
     getCoinsByDate(
       1,
       setAntepenultimateMonthChartDataBrita,
       setAntepenultimateMonthChartDataBitcoin
     );
-
-    getMonth();
   }, []);
-
-  const getDays = (
-    month: number,
-    setDaysBrita: (value: React.SetStateAction<number[] | undefined>) => void,
-    setDaysBitcoin: (value: React.SetStateAction<number[] | undefined>) => void
-  ) => {
-    const date = new Date();
-    const months = date.getMonth() - month;
-    const year = date.getFullYear();
-    setDaysBrita(daysWithoutWekeend(months, year));
-
-    const days = new Date(
-      date.getFullYear(),
-      date.getMonth() + 1 - month,
-      0
-    ).getDate();
-
-    let day = [];
-    for (let i = 1; i <= days; i++) {
-      day.push(i);
-    }
-
-    setDaysBitcoin(day);
-  };
-
-  const getMonth = () => {
-    const date = new Date();
-    const antepenultimate = date.getMonth() - 1;
-
-    setAntepenultimateMonth(monthLabels[antepenultimate]);
-  };
 
   const getData = () => {
     try {
@@ -149,7 +121,7 @@ export const WalletComponent = () => {
 
   const getCoins = () => {
     const initialDateBrita = dateBrita(0);
-    const finalDateBrita = dateBrita(1);
+    const finalDateBrita = dateBrita(2);
 
     // brtia
     axios
@@ -199,9 +171,7 @@ export const WalletComponent = () => {
     // bitcoin
     axios
       .get(
-        `https://economia.awesomeapi.com.br/json/daily/BTC-BRL/${
-          days + 1
-        }?start_date=${year}${months
+        `https://economia.awesomeapi.com.br/json/daily/BTC-BRL/${days}?start_date=${year}${months
           .toString()
           .padStart(2, "0")}01&end_date=${year}${months
           .toString()
@@ -245,7 +215,7 @@ export const WalletComponent = () => {
     }
   };
 
-  const chartsBitcoin = [
+  const chartBitcoin = [
     {
       labels: lastMonthDaysBitcoin,
       data: lastMonthChartDataBitcoin,
@@ -291,6 +261,7 @@ export const WalletComponent = () => {
       value: ((user?.bitcoin ?? 0) * bitcoin).toFixed(2),
     },
     { title: "Saldo", value: Number(user?.sale).toFixed(2) },
+    { title: "Quantidade", amount: user?.bitcoin },
   ];
 
   const dataBrita = [
@@ -300,6 +271,7 @@ export const WalletComponent = () => {
     },
     { title: "Total em Brita", value: ((user?.brita ?? 0) * brita).toFixed(2) },
     { title: "Saldo", value: Number(user?.sale).toFixed(2) },
+    { title: "Quantidade", amount: user?.brita },
   ];
 
   const formModalBitcoin = [
@@ -616,7 +588,7 @@ export const WalletComponent = () => {
     {
       tabTitle: "Bitcoin",
       values: dataBitcoin,
-      charts: chartsBitcoin,
+      charts: chartBitcoin,
       transactions: orderBitcoin,
       formModal: formModalBitcoin,
     },

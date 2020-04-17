@@ -13,6 +13,7 @@ import {
 export interface IValue {
   title: string;
   value?: string;
+  amount?: number;
 }
 
 interface IProps {
@@ -27,10 +28,13 @@ export const Header = (props: IProps) => {
         {props.options.map((option, index) => (
           <BlockWrapper key={index}>
             <Title>{option.title}</Title>
-            <Value>
-              <Prefix>R$</Prefix>
-              {option.value}
-            </Value>
+            {option.value && (
+              <Value>
+                <Prefix>R$</Prefix>
+                {option.value}
+              </Value>
+            )}
+            <Value>{option.amount}</Value>
           </BlockWrapper>
         ))}
       </ListWrapper>

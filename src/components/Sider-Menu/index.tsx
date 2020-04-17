@@ -1,4 +1,4 @@
-import { LineChartOutlined, WalletOutlined } from "@ant-design/icons";
+import { WalletOutlined } from "@ant-design/icons";
 import React from "react";
 import { Logo, MenuItem, MenuWrapper, SiderWrapper } from "./styled";
 
@@ -19,10 +19,6 @@ export const SiderMenu = (props: IProps) => {
       <Logo src={logo} collapsed={props.collapsed} />
       <MenuWrapper defaultSelectedKeys={["1"]} mode="inline">
         <MenuItem key="1">
-          <LineChartOutlined />
-          <span>Dashboard</span>
-        </MenuItem>
-        <MenuItem key="2">
           <WalletOutlined />
           <span>Wallet</span>
         </MenuItem>

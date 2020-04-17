@@ -9,15 +9,15 @@ export const HeaderWrapper = styled.section`
 
 export const ListWrapper = styled.div`
   align-items: flex-start;
-  column-gap: 24px;
+  column-gap: 16px;
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: auto auto auto auto;
 `;
 
 export const BlockWrapper = styled.div`
   &:first-child {
     p {
-      font-size: 28px;
+      font-size: 24px;
     }
   }
 `;

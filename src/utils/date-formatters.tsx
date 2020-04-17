@@ -71,3 +71,36 @@ export const daysWithoutWekeend = (month: number, year: number) => {
   }
   return days;
 };
+
+export const getMonth = (
+  setAntepenultimateMonth: (value: React.SetStateAction<string>) => void
+) => {
+  const date = new Date();
+  const antepenultimate = date.getMonth() - 1;
+
+  setAntepenultimateMonth(monthLabels[antepenultimate]);
+};
+
+export const getDays = (
+  month: number,
+  setDaysBrita: (value: React.SetStateAction<number[] | undefined>) => void,
+  setDaysBitcoin: (value: React.SetStateAction<number[] | undefined>) => void
+) => {
+  const date = new Date();
+  const months = date.getMonth() - month;
+  const year = date.getFullYear();
+  setDaysBrita(daysWithoutWekeend(months, year));
+
+  const days = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1 - month,
+    0
+  ).getDate();
+
+  let day = [];
+  for (let i = 1; i <= days; i++) {
+    day.push(i);
+  }
+
+  setDaysBitcoin(day);
+};
