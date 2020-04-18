@@ -2,7 +2,8 @@ import Modal from "antd/lib/modal/Modal";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { AlertWrapper } from "../../styles/Antd/Alert/styled";
-import { CoinValue, FormWrapper, Input, Label, Paragraph } from "./styled";
+import { FormWrapper, Input, Label } from "../../styles/Form/styled";
+import { CoinValue, Paragraph } from "./styled";
 
 export interface IFormFields {
   amount: number;
