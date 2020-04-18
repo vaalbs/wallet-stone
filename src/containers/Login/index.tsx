@@ -1,5 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router";
 import firebaseRef from "../../service/firebase";
 import { AlertWrapper } from "../../styles/Antd/Alert/styled";
 import {
@@ -19,13 +20,22 @@ interface IFormFields {
   password: string;
 }
 
-export const Login = () => {
+interface IProps {
+  onLogged: () => void;
+}
+
+export const Login = (props: IProps) => {
   const { register, handleSubmit, errors } = useForm<IFormFields>();
+  const history = useHistory();
 
   const onSubmit = (values: IFormFields) => {
     firebaseRef
       .auth()
       .signInWithEmailAndPassword(values.login, values.password)
+      .then((res) => {
+        setImmediate(() => history.push("/carteira"));
+        props.onLogged();
+      })
       .catch(function (error) {
         // Handle Errors here.
         var errorCode = error.code;

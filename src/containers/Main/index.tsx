@@ -12,26 +12,25 @@ import { GlobalStyle } from "./styled";
 
 export const Main = () => {
   const [collapsed, setCollapsed] = React.useState(false);
-  const user = firebaseRef.auth().currentUser;
   const [isLogged, setIsLogged] = React.useState(false);
 
   React.useEffect(() => {
     onLogged();
-  }, [user]);
+  }, [isLogged]);
 
   const onLogged = () => {
-    if (user) {
-      setIsLogged(true);
-    } else {
-      setIsLogged(false);
-    }
+    firebaseRef.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        setIsLogged(true);
+      } else {
+        setIsLogged(false);
+      }
+    });
   };
-
-  console.log("user", user, isLogged);
 
   return (
     <Layout>
-      {isLogged && (
+      {isLogged ? (
         <>
           <SiderMenu
             collapsed={collapsed}
@@ -40,17 +39,27 @@ export const Main = () => {
           <Layout className="site-layout">
             <Header />
             <GlobalStyle />
-            <Route path="/carteira" component={WalletComponent} />
-            <Route path="/" component={WalletComponent} />
+            <Route path="/carteira" exact component={WalletComponent} />
+            <Route path="/" exact component={WalletComponent} />
             <Footer />
           </Layout>
         </>
+      ) : (
+        <Switch>
+          <Route
+            path="/cadastre-se"
+            render={() => <SignUp onLogged={() => onLogged()} />}
+          />
+          <Route
+            path="/entrar"
+            render={() => <Login onLogged={() => onLogged()} />}
+          />
+          <Route
+            path="/"
+            render={() => <Login onLogged={() => onLogged()} />}
+          />
+        </Switch>
       )}
-      <Switch>
-        <Route path="/cadastre-se" component={SignUp} />
-        <Route path="/entrar" component={Login} />
-        <Route path="/" component={Login} />
-      </Switch>
     </Layout>
   );
 };
