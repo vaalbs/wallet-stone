@@ -24,6 +24,8 @@ interface IUser {
 }
 
 export const WalletComponent = () => {
+  var userId = firebaseRef.auth().currentUser?.uid;
+
   const lastMonth = React.createRef<HTMLCanvasElement>();
   const antepenultimateDays = React.createRef<HTMLCanvasElement>();
 
@@ -61,10 +63,6 @@ export const WalletComponent = () => {
     antepenultimateMonthChartDataBitcoin,
     setAntepenultimateMonthChartDataBitcoin,
   ] = React.useState<number[]>();
-
-  const [amountBitcoinByBrita, setAmountBitcoinByBrita] = React.useState<
-    number | undefined
-  >(undefined);
 
   const [showOnBuyBitcoin, setShowOnBuyBitcoin] = React.useState(false);
   const [showOnBuyBrita, setShowOnBuyBrita] = React.useState(false);
@@ -118,7 +116,11 @@ export const WalletComponent = () => {
 
   const getData = () => {
     try {
-      const sale = firebaseRef.database().ref().child("user");
+      const sale = firebaseRef
+        .database()
+        .ref()
+        .child("users/" + userId);
+
       sale.on("value", (snap) => setUser(snap.val()));
     } catch (error) {}
   };
@@ -445,14 +447,19 @@ export const WalletComponent = () => {
     try {
       firebaseRef
         .database()
-        .ref("user")
+        .ref("users/" + userId)
         .update({
           sale: totalSale,
           [title.toLocaleLowerCase()]: Number(
             Number(formData.amount) + Number(coinAmount ?? 0)
           ),
         })
-        .then(() => firebaseRef.database().ref("user/orders").push(order));
+        .then(() =>
+          firebaseRef
+            .database()
+            .ref("users/" + userId + "/orders")
+            .push(order)
+        );
 
       message.success("Compra realizada com sucesso!");
     } catch (error) {
@@ -496,14 +503,19 @@ export const WalletComponent = () => {
     try {
       firebaseRef
         .database()
-        .ref("user")
+        .ref("users/" + userId)
         .update({
           sale: totalSell,
           [title.toLocaleLowerCase()]: Number(
             Number(coinAmount ?? 0) - Number(formData.amount)
           ),
         })
-        .then(() => firebaseRef.database().ref("user/orders").push(order));
+        .then(() =>
+          firebaseRef
+            .database()
+            .ref("users/" + userId + "/orders")
+            .push(order)
+        );
 
       message.success("Venda realizada com sucesso!");
     } catch (error) {
@@ -539,8 +551,6 @@ export const WalletComponent = () => {
 
     const amount = totalBuy / totalCoin;
 
-    setAmountBitcoinByBrita(amount);
-
     if (amount < 0.1) {
       setLoading(false);
       setErrorMessage("Quantidade insuficiente! Quantidade mínima de 0.1.");
@@ -570,7 +580,7 @@ export const WalletComponent = () => {
     try {
       firebaseRef
         .database()
-        .ref("user")
+        .ref("users/" + userId)
         .update({
           sale: totalBuy,
           [title.toLocaleLowerCase()]: Number(
@@ -580,8 +590,18 @@ export const WalletComponent = () => {
             ((coinAmountWith ?? 0) - amount).toFixed(2)
           ),
         })
-        .then(() => firebaseRef.database().ref("user/orders").push(order))
-        .then(() => firebaseRef.database().ref("user/orders").push(orderWith));
+        .then(() =>
+          firebaseRef
+            .database()
+            .ref("users" + userId + "/orders")
+            .push(order)
+        )
+        .then(() =>
+          firebaseRef
+            .database()
+            .ref("users" + userId + "/orders")
+            .push(orderWith)
+        );
 
       message.success("Compra realizada com sucesso!");
     } catch (error) {

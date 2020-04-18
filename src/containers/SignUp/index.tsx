@@ -33,6 +33,14 @@ export const SignUp = (props: IProps) => {
     firebaseRef
       .auth()
       .createUserWithEmailAndPassword(values.login, values.password)
+      .then((res) =>
+        firebaseRef
+          .database()
+          .ref("users/" + res.user?.uid)
+          .update({
+            sale: 100000,
+          })
+      )
       .then((res) => {
         setImmediate(() => history.push("/carteira"));
         props.onLogged();
