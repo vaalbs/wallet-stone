@@ -1,6 +1,7 @@
 import Chart from "chart.js";
 import React from "react";
 import { TabPaneWrapper } from "../../styles/Antd/Tab/styled";
+import { Loading } from "../Loading";
 import { ChartWrapper, Tab } from "./styled";
 
 export interface IChart {
@@ -8,6 +9,7 @@ export interface IChart {
   data?: number[];
   tabTitle: string;
   reference: React.RefObject<HTMLCanvasElement>;
+  loading: boolean;
 }
 
 interface IProps {
@@ -55,7 +57,11 @@ export const ChartComponent = (props: IProps) => {
             key={`${index}`}
             forceRender={true}
           >
-            <canvas height="80px" id={`${index}`} ref={chart.reference} />
+            {!chart.loading ? (
+              <canvas height="80px" id={`${index}`} ref={chart.reference} />
+            ) : (
+              <Loading />
+            )}
           </TabPaneWrapper>
         ))}
       </Tab>

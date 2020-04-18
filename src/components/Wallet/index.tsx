@@ -12,6 +12,7 @@ interface ITabs {
   formModal: IFormModal[];
   charts: IChart[];
   transactions: ITransaction[];
+  loadingOrders: boolean;
 }
 
 interface IProps {
@@ -26,7 +27,10 @@ export const Wallet = (props: IProps) => {
           <TabPaneWrapper tab={`${tab.tabTitle}`} key={`${index}`}>
             <Header options={tab.values} formModal={tab.formModal} />
             <ChartComponent charts={tab.charts} />
-            <RecentTransactions transactions={tab.transactions} />
+            <RecentTransactions
+              transactions={tab.transactions}
+              loading={tab.loadingOrders}
+            />
           </TabPaneWrapper>
         ))}
       </TabWrapper>

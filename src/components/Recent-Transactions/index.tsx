@@ -1,4 +1,5 @@
 import React from "react";
+import { Loading } from "../Loading";
 import { Title } from "../Title";
 import {
   Amount,
@@ -24,6 +25,7 @@ export interface ITransaction {
 
 interface IProps {
   transactions: ITransaction[];
+  loading: boolean;
 }
 
 export const RecentTransactions = (props: IProps) => {
@@ -36,8 +38,9 @@ export const RecentTransactions = (props: IProps) => {
         title="Transações Recentes"
       />
       <RecentTransactionsList>
-        {props.transactions.length > 0
-          ? props.transactions.map((transaction, index) => (
+        {!props.loading ? (
+          props.transactions.length > 0 ? (
+            props.transactions.map((transaction, index) => (
               <RecentTransaction key={index}>
                 <DateHour>{transaction.dateHour}</DateHour>
                 {transaction.operation === "buy" ? (
@@ -57,7 +60,12 @@ export const RecentTransactions = (props: IProps) => {
                 <Value>R$ {transaction.total.toFixed(2)}</Value>
               </RecentTransaction>
             ))
-          : "Nenhuma transação encontrada."}
+          ) : (
+            "Nenhuma transação encontrada."
+          )
+        ) : (
+          <Loading />
+        )}
       </RecentTransactionsList>
     </RecentTransactionsWrapper>
   );

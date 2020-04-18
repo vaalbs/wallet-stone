@@ -19,7 +19,7 @@ export const Main = () => {
   }, [isLogged]);
 
   const onLogged = () => {
-    firebaseRef.auth().onAuthStateChanged(function (user) {
+    firebaseRef.auth().onAuthStateChanged((user) => {
       if (user) {
         setIsLogged(true);
       } else {
@@ -29,7 +29,8 @@ export const Main = () => {
   };
 
   return (
-    <Layout>
+    <Layout style={{ minHeight: "100vh" }}>
+      <GlobalStyle />
       {isLogged ? (
         <>
           <SiderMenu
@@ -38,7 +39,6 @@ export const Main = () => {
           />
           <Layout className="site-layout">
             <Header />
-            <GlobalStyle />
             <Route path="/carteira" exact component={WalletComponent} />
             <Route path="/" exact component={WalletComponent} />
             <Footer />

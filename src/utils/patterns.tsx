@@ -1,5 +1,5 @@
 export const defaultErrorMessage =
-  "Oops, algo de errado aconteceu, tente novamente!";
+  "Oops! Algo deu errado. Tente novamente mais tarde!";
 
 export const PATTERNS = {
   email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,

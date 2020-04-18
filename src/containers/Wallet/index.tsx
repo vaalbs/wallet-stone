@@ -15,12 +15,20 @@ import {
   getDays,
   getMonth,
 } from "../../utils/date-formatters";
+import { defaultErrorMessage } from "../../utils/patterns";
 
 interface IUser {
   sale: string;
   bitcoin: number;
   brita: number;
   orders: ITransaction;
+}
+
+interface ILoading {
+  data: boolean;
+  chart: boolean;
+  orders: boolean;
+  form: boolean;
 }
 
 export const WalletComponent = () => {
@@ -73,7 +81,12 @@ export const WalletComponent = () => {
   const [showOnSellBitcoin, setShowOnSellBitcoin] = React.useState(false);
   const [showOnSellBrita, setShowOnSellBrita] = React.useState(false);
 
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState<ILoading>({
+    data: false,
+    chart: false,
+    orders: false,
+    form: false,
+  });
   const [errorMessage, setErrorMessage] = React.useState("");
 
   const [user, setUser] = React.useState<IUser>();
@@ -115,6 +128,8 @@ export const WalletComponent = () => {
   }, []);
 
   const getData = () => {
+    setLoading({ data: true, chart: false, orders: false, form: false });
+
     try {
       const sale = firebaseRef
         .database()
@@ -122,7 +137,11 @@ export const WalletComponent = () => {
         .child("users/" + userId);
 
       sale.on("value", (snap) => setUser(snap.val()));
-    } catch (error) {}
+    } catch (error) {
+      error.message(error.message || defaultErrorMessage);
+    } finally {
+      setLoading({ data: false, chart: false, orders: false, form: false });
+    }
   };
 
   const getCoins = () => {
@@ -136,14 +155,16 @@ export const WalletComponent = () => {
       )
       .then((response) =>
         setBrita(response.data.value[0].cotacaoCompra.toFixed(2))
-      );
+      )
+      .catch((error) => message.error(error.message || defaultErrorMessage));
 
     // bitcoin
     axios
       .get(
         `https://economia.awesomeapi.com.br/BTC-BRL/?start_date=${dateBitcoin()}&end_date=${dateBitcoin()}`
       )
-      .then((response) => setBitcoin(response.data[0].bid));
+      .then((response) => setBitcoin(response.data[0].bid))
+      .catch((error) => message.error(error.message || defaultErrorMessage));
   };
 
   const getCoinsByDate = (
@@ -155,6 +176,8 @@ export const WalletComponent = () => {
       value: React.SetStateAction<number[] | undefined | any>
     ) => void
   ) => {
+    setLoading({ data: false, chart: true, orders: false, form: false });
+
     const date = new Date();
     const months = date.getMonth() - month;
     const year = date.getFullYear();
@@ -172,7 +195,11 @@ export const WalletComponent = () => {
       .then((response) =>
         response.data.value.map((data: any) => data.cotacaoCompra)
       )
-      .then((response) => setDataByDateBrita(response));
+      .then((response) => setDataByDateBrita(response))
+      .catch((error) => message.error(error.message || defaultErrorMessage))
+      .finally(() =>
+        setLoading({ data: false, chart: false, orders: false, form: false })
+      );
 
     // bitcoin
     axios
@@ -188,36 +215,56 @@ export const WalletComponent = () => {
         const data = response.data.map((data: any) => data.bid);
         data.push(lastDay.bid);
         setDataByDateBitcoin(data);
-      });
+      })
+      .catch((error) => message.error(error.message || defaultErrorMessage))
+      .finally(() =>
+        setLoading({ data: false, chart: false, orders: false, form: false })
+      );
   };
 
   const getOrdersBitcoin = () => {
-    if (user?.orders) {
-      let order: ITransaction[] = [];
-      Object.values(user.orders).reduce(function (result: any, key: any) {
-        order.push(key[0]);
-      }, {});
+    setLoading({ data: false, chart: false, orders: true, form: false });
 
-      const orderBitcoin = order
-        .filter((order) => order.coin === "Bitcoin")
-        .map((order) => order);
+    try {
+      if (user?.orders) {
+        let order: ITransaction[] = [];
+        Object.values(user.orders).reduce(function (result: any, key: any) {
+          order.push(key[0]);
+        }, {});
 
-      setOrderBitcoin(orderBitcoin);
+        const orderBitcoin = order
+          .filter((order) => order.coin === "Bitcoin")
+          .map((order) => order);
+
+        setOrderBitcoin(orderBitcoin);
+      }
+    } catch (error) {
+      message.error(error.message || defaultErrorMessage);
+    } finally {
+      setLoading({ data: false, chart: false, orders: false, form: false });
     }
   };
 
   const getOrdersBrita = () => {
-    if (user?.orders) {
-      let order: ITransaction[] = [];
-      Object.values(user.orders).reduce(function (result: any, key: any) {
-        order.push(key[0]);
-      }, {});
+    setLoading({ data: false, chart: false, orders: true, form: false });
 
-      const orderBrita = order
-        .filter((order) => order.coin === "Brita")
-        .map((order) => order);
+    try {
+      if (user?.orders) {
+        let order: ITransaction[] = [];
+        Object.values(user.orders).reduce(function (result: any, key: any) {
+          order.push(key[0]);
+        }, {});
 
-      setOrderBrita(orderBrita);
+        const orderBrita = order
+          .filter((order) => order.coin === "Brita")
+          .map((order) => order);
+
+        setOrderBrita(orderBrita);
+      }
+    } catch (error) {
+      message.error(error.message || defaultErrorMessage);
+    } finally {
+      setLoading({ data: false, chart: false, orders: false, form: false });
     }
   };
 
@@ -227,12 +274,14 @@ export const WalletComponent = () => {
       data: lastMonthChartDataBitcoin,
       tabTitle: "Último mês",
       reference: lastMonth,
+      loading: loading.chart,
     },
     {
       labels: antepenultimateMonthDaysBitcoin,
       data: antepenultimateMonthChartDataBitcoin,
       tabTitle: antepenultimateMonth,
       reference: antepenultimateDays,
+      loading: loading.chart,
     },
   ];
 
@@ -242,12 +291,14 @@ export const WalletComponent = () => {
       data: lastMonthChartDataBrita,
       tabTitle: "Último mês",
       reference: lastMonth,
+      loading: loading.chart,
     },
     {
       labels: antepenultimateMonthDaysBrita,
       data: antepenultimateMonthChartDataBrita,
       tabTitle: antepenultimateMonth,
       reference: antepenultimateDays,
+      loading: loading.chart,
     },
   ];
 
@@ -285,7 +336,7 @@ export const WalletComponent = () => {
       buttonName: "Comprar",
       buttonModalName: "Comprar",
       errorMessage,
-      loading,
+      loading: loading?.form,
       showModal: showOnBuyBitcoin,
       title: "Comprar Bitcoin",
       buttonIcon: <ShoppingCartOutlined />,
@@ -302,7 +353,7 @@ export const WalletComponent = () => {
       buttonName: "Vender",
       buttonModalName: "Vender",
       errorMessage,
-      loading,
+      loading: loading?.form,
       showModal: showOnSellBitcoin,
       title: "Vender Bitcoin",
       buttonIcon: <DollarCircleOutlined />,
@@ -325,7 +376,7 @@ export const WalletComponent = () => {
       buttonName: "Comprar com Brita",
       buttonModalName: "Comprar",
       errorMessage,
-      loading,
+      loading: loading?.form,
       showModal: showOnBuyWithBrita,
       title: "Comprar Bitcoin usando Brita",
       buttonIcon: <ShoppingCartOutlined />,
@@ -356,7 +407,7 @@ export const WalletComponent = () => {
       buttonName: "Comprar",
       buttonModalName: "Comprar",
       errorMessage,
-      loading,
+      loading: loading?.form,
       showModal: showOnBuyBrita,
       title: "Comprar Brita",
       buttonIcon: <ShoppingCartOutlined />,
@@ -373,7 +424,7 @@ export const WalletComponent = () => {
       buttonName: "Vender",
       buttonModalName: "Vender",
       errorMessage,
-      loading,
+      loading: loading?.form,
       showModal: showOnSellBrita,
       title: "Vender Brita",
       buttonIcon: <DollarCircleOutlined />,
@@ -390,7 +441,7 @@ export const WalletComponent = () => {
       buttonName: "Comprar com Bitcoin",
       buttonModalName: "Comprar",
       errorMessage,
-      loading,
+      loading: loading?.form,
       showModal: showOnBuyWithBitcoin,
       title: "Comprar Brita usando Bitcoin",
       buttonIcon: <ShoppingCartOutlined />,
@@ -423,12 +474,12 @@ export const WalletComponent = () => {
     setShowModal: (value: boolean) => void,
     coinAmount?: number
   ) => {
-    setLoading(true);
+    setLoading({ data: false, chart: false, orders: false, form: true });
 
     const totalBuy = formData.amount * coinValue;
 
     if (totalBuy > Number(user?.sale)) {
-      setLoading(false);
+      setLoading({ data: false, chart: false, orders: false, form: false });
       setErrorMessage("Saldo insuficiente!");
       return;
     }
@@ -444,32 +495,28 @@ export const WalletComponent = () => {
         total: totalBuy,
       },
     ];
-    try {
-      firebaseRef
-        .database()
-        .ref("users/" + userId)
-        .update({
-          sale: totalSale,
-          [title.toLocaleLowerCase()]: Number(
-            Number(formData.amount) + Number(coinAmount ?? 0)
-          ),
-        })
-        .then(() =>
-          firebaseRef
-            .database()
-            .ref("users/" + userId + "/orders")
-            .push(order)
-        );
 
-      message.success("Compra realizada com sucesso!");
-    } catch (error) {
-      message.error(
-        error.message || "Oops! Algo deu errado. Tente novamente mais tarde."
-      );
-    } finally {
-      setShowModal(false);
-      setLoading(false);
-    }
+    firebaseRef
+      .database()
+      .ref("users/" + userId)
+      .update({
+        sale: totalSale,
+        [title.toLocaleLowerCase()]: Number(
+          Number(formData.amount) + Number(coinAmount ?? 0)
+        ),
+      })
+      .then(() => {
+        firebaseRef
+          .database()
+          .ref("users/" + userId + "/orders")
+          .push(order);
+        message.success("Compra realizada com sucesso!");
+      })
+      .catch((error) => message.error(error.message || defaultErrorMessage))
+      .finally(() => {
+        setShowModal(false);
+        setLoading({ data: false, chart: false, orders: false, form: false });
+      });
   };
 
   const onSell = (
@@ -479,12 +526,12 @@ export const WalletComponent = () => {
     setShowModal: (value: boolean) => void,
     coinAmount?: number
   ) => {
-    setLoading(true);
+    setLoading({ data: false, chart: false, orders: false, form: true });
 
     const total = formData.amount * (coinValue ?? 0);
 
     if (formData.amount > Number(coinAmount ?? 0)) {
-      setLoading(false);
+      setLoading({ data: false, chart: false, orders: false, form: false });
       setErrorMessage("Você não possui essa quantidade!");
       return;
     }
@@ -500,32 +547,28 @@ export const WalletComponent = () => {
         total: total,
       },
     ];
-    try {
-      firebaseRef
-        .database()
-        .ref("users/" + userId)
-        .update({
-          sale: totalSell,
-          [title.toLocaleLowerCase()]: Number(
-            Number(coinAmount ?? 0) - Number(formData.amount)
-          ),
-        })
-        .then(() =>
-          firebaseRef
-            .database()
-            .ref("users/" + userId + "/orders")
-            .push(order)
-        );
 
-      message.success("Venda realizada com sucesso!");
-    } catch (error) {
-      message.error(
-        error.message || "Oops! Algo deu errado. Tente novamente mais tarde."
-      );
-    } finally {
-      setShowModal(false);
-      setLoading(false);
-    }
+    firebaseRef
+      .database()
+      .ref("users/" + userId)
+      .update({
+        sale: totalSell,
+        [title.toLocaleLowerCase()]: Number(
+          Number(coinAmount ?? 0) - Number(formData.amount)
+        ),
+      })
+      .then(() => {
+        firebaseRef
+          .database()
+          .ref("users/" + userId + "/orders")
+          .push(order);
+        message.success("Venda realizada com sucesso!");
+      })
+      .catch((error) => message.error(error.message || defaultErrorMessage))
+      .finally(() => {
+        setShowModal(false);
+        setLoading({ data: false, chart: false, orders: false, form: false });
+      });
   };
 
   const onBuyWith = (
@@ -538,13 +581,13 @@ export const WalletComponent = () => {
     coinAmount?: number,
     coinAmountWith?: number
   ) => {
-    setLoading(true);
+    setLoading({ data: false, chart: false, orders: false, form: true });
 
     const totalBuy = formData.amount * coinValue;
     const totalCoin = coinBuyWith * (coinAmountWith ?? 0);
 
     if (totalBuy > totalCoin) {
-      setLoading(false);
+      setLoading({ data: false, chart: false, orders: false, form: false });
       setErrorMessage("Saldo insuficiente!");
       return;
     }
@@ -552,7 +595,7 @@ export const WalletComponent = () => {
     const amount = totalBuy / totalCoin;
 
     if (amount < 0.1) {
-      setLoading(false);
+      setLoading({ data: false, chart: false, orders: false, form: false });
       setErrorMessage("Quantidade insuficiente! Quantidade mínima de 0.1.");
       return;
     }
@@ -577,41 +620,36 @@ export const WalletComponent = () => {
       },
     ];
 
-    try {
-      firebaseRef
-        .database()
-        .ref("users/" + userId)
-        .update({
-          sale: totalBuy,
-          [title.toLocaleLowerCase()]: Number(
-            Number(coinAmount ?? 0) + Number(formData.amount)
-          ),
-          [titleWith.toLocaleLowerCase()]: Number(
-            ((coinAmountWith ?? 0) - amount).toFixed(2)
-          ),
-        })
-        .then(() =>
-          firebaseRef
-            .database()
-            .ref("users" + userId + "/orders")
-            .push(order)
-        )
-        .then(() =>
-          firebaseRef
-            .database()
-            .ref("users" + userId + "/orders")
-            .push(orderWith)
-        );
-
-      message.success("Compra realizada com sucesso!");
-    } catch (error) {
-      message.error(
-        error.message || "Oops! Algo deu errado. Tente novamente mais tarde."
-      );
-    } finally {
-      setShowModal(false);
-      setLoading(false);
-    }
+    firebaseRef
+      .database()
+      .ref("users/" + userId)
+      .update({
+        sale: totalBuy,
+        [title.toLocaleLowerCase()]: Number(
+          Number(coinAmount ?? 0) + Number(formData.amount)
+        ),
+        [titleWith.toLocaleLowerCase()]: Number(
+          ((coinAmountWith ?? 0) - amount).toFixed(2)
+        ),
+      })
+      .then(() =>
+        firebaseRef
+          .database()
+          .ref("users" + userId + "/orders")
+          .push(order)
+      )
+      .then(() => {
+        firebaseRef
+          .database()
+          .ref("users" + userId + "/orders")
+          .push(orderWith);
+        message.success("Compra realizada com sucesso!");
+      })
+      .catch((error) => message.error(error.message || defaultErrorMessage))
+      .finally(() => {
+        setShowModal(false);
+        setLoading({ data: false, chart: false, orders: false, form: false });
+      });
   };
 
   const tabs = [
@@ -620,6 +658,7 @@ export const WalletComponent = () => {
       values: dataBitcoin,
       charts: chartBitcoin,
       transactions: orderBitcoin,
+      loadingOrders: loading.orders,
       formModal: formModalBitcoin,
     },
     {
@@ -627,6 +666,7 @@ export const WalletComponent = () => {
       values: dataBrita,
       charts: chartBrita,
       transactions: orderBrita,
+      loadingOrders: loading.orders,
       formModal: formModalBrita,
     },
   ];

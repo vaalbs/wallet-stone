@@ -2,7 +2,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 import firebaseRef from "../../service/firebase";
-import { AlertWrapper } from "../../styles/Antd/Alert/styled";
 import {
   ButtonWrapper,
   Form,
@@ -12,6 +11,7 @@ import {
   Text,
   Title,
 } from "../../styles/Auth/styled";
+import { Error } from "../../styles/Error/styled";
 import { Label, Row } from "../../styles/Form/styled";
 import { PATTERNS, VALIDATION_MESSAGE } from "../../utils/patterns";
 
@@ -27,8 +27,13 @@ interface IProps {
 export const Login = (props: IProps) => {
   const { register, handleSubmit, errors } = useForm<IFormFields>();
   const history = useHistory();
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const onSubmit = (values: IFormFields) => {
+    setErrorMessage("");
+    setLoading(true);
+
     firebaseRef
       .auth()
       .signInWithEmailAndPassword(values.login, values.password)
@@ -40,8 +45,9 @@ export const Login = (props: IProps) => {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
-        // ...
-      });
+        setErrorMessage(errorMessage);
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -61,13 +67,7 @@ export const Login = (props: IProps) => {
               },
             })}
           />
-          {errors.login && (
-            <AlertWrapper
-              showIcon
-              message={`${errors.login.message}`}
-              type="error"
-            />
-          )}
+          {errors.login && <Error>{errors.login.message}</Error>}
         </Row>
         <Row>
           <Label>Senha</Label>
@@ -83,15 +83,10 @@ export const Login = (props: IProps) => {
               },
             })}
           />
-          {errors.password && (
-            <AlertWrapper
-              showIcon
-              message={`${errors.password.message}`}
-              type="error"
-            />
-          )}
+          {errors.password && <Error>{errors.password.message}</Error>}
         </Row>
-        <ButtonWrapper type="primary" htmlType="submit">
+        {errorMessage && <Error>{errorMessage}</Error>}
+        <ButtonWrapper type="primary" htmlType="submit" loading={loading}>
           Entrar
         </ButtonWrapper>
       </Form>

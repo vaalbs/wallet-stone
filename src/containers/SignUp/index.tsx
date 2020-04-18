@@ -28,8 +28,13 @@ interface IProps {
 export const SignUp = (props: IProps) => {
   const { register, handleSubmit, errors } = useForm<IFormFields>();
   const history = useHistory();
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const onSubmit = (values: IFormFields) => {
+    setErrorMessage("");
+    setLoading(true);
+
     firebaseRef
       .auth()
       .createUserWithEmailAndPassword(values.login, values.password)
@@ -49,8 +54,9 @@ export const SignUp = (props: IProps) => {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
-        // ...
-      });
+        setErrorMessage(errorMessage);
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -93,8 +99,9 @@ export const SignUp = (props: IProps) => {
           />
           {errors.password && <Error>{errors.password.message}</Error>}
         </Row>
-        <ButtonWrapper type="primary" htmlType="submit">
-          Entrar
+        {errorMessage && <Error>{errorMessage}</Error>}
+        <ButtonWrapper type="primary" htmlType="submit" loading={loading}>
+          Cadastrar
         </ButtonWrapper>
       </Form>
       <Text>

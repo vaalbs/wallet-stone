@@ -6,7 +6,7 @@ import { Input } from "../../styles/Form/styled";
 export const FormWrapper = styled.section`
   background-color: ${(props) => props.theme.color.white};
   border-radius: 4px;
-  margin: 0 auto;
+  margin: 100px auto 0 auto;
   max-width: 332px;
   padding: 32px;
   width: 100%;
