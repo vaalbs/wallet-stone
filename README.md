@@ -2,16 +2,16 @@
 
 Projeto de carteiras virtuais de criptomoedas. Foram utilizadas duas criptomoedas Brita, que utiliza o valor do dólar, e a Bitcoin. Para obter as informações foram feitas requisições para as seguintes APIs:
 
-    - [Economia Awesome API](https://economia.awesomeapi.com.br/)
-    - [API - Dados Abertos – BCB - Banco Central do Brasil](https://olinda.bcb.gov.br)
+- [Economia Awesome API](https://economia.awesomeapi.com.br/)
+- [API - Dados Abertos – BCB - Banco Central do Brasil](https://olinda.bcb.gov.br)
 
 Sobre as operações financeiras de criptomoedas, é correto afirmar que:
 
-    - O cliente pode vender suas criptomoedas ou trocar uma pela outra.
+- O cliente pode vender suas criptomoedas ou trocar uma pela outra.
 
-    - O cliente precisa saber o saldo discriminado por cada moeda.
+- O cliente precisa saber o saldo discriminado por cada moeda.
 
-    - O cliente precisa ter um extrato de operações financeiras.
+- O cliente precisa ter um extrato de operações financeiras.
 
 Além disso, são exibidos gráficos do mês anterior e do antepenúltimo mês tendo como o eixo X os dias do mês e o eixo Y os valores de compra. Os gráficos da Brita estão vindo sem os finais de semana por não terem valores nesses dias.
 
