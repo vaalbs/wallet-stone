@@ -92,7 +92,7 @@ export const WalletComponent = () => {
   const [user, setUser] = React.useState<IUser>();
   const [orderBitcoin, setOrderBitcoin] = React.useState<ITransaction[]>([]);
   const [orderBrita, setOrderBrita] = React.useState<ITransaction[]>([]);
-  const [brita, setBrita] = React.useState(0);
+  const [brita, setBrita] = React.useState(4.5);
   const [bitcoin, setBitcoin] = React.useState(0);
 
   React.useEffect(() => {
@@ -156,7 +156,10 @@ export const WalletComponent = () => {
       .then((response) =>
         setBrita(response.data.value[0].cotacaoCompra.toFixed(2))
       )
-      .catch((error) => message.error(error.message || defaultErrorMessage));
+      .catch((error) => {
+        message.error(error.message || defaultErrorMessage);
+        setBrita(4.5);
+      });
 
     // bitcoin
     axios
@@ -164,7 +167,10 @@ export const WalletComponent = () => {
         `https://economia.awesomeapi.com.br/BTC-BRL/?start_date=${dateBitcoin()}&end_date=${dateBitcoin()}`
       )
       .then((response) => setBitcoin(response.data[0].bid))
-      .catch((error) => message.error(error.message || defaultErrorMessage));
+      .catch((error) => {
+        message.error(error.message || defaultErrorMessage);
+        setBitcoin(37000);
+      });
   };
 
   const getCoinsByDate = (
@@ -304,8 +310,8 @@ export const WalletComponent = () => {
 
   const equityValue = (
     Number(user?.sale ?? 0) +
-    (user?.bitcoin ?? 0) * bitcoin +
-    (user?.brita ?? 0) * brita
+    Number((user?.bitcoin ?? 0) * bitcoin) +
+    Number((user?.brita ?? 0) * brita)
   ).toFixed(2);
 
   const dataBitcoin = [
@@ -318,7 +324,7 @@ export const WalletComponent = () => {
       value: ((user?.bitcoin ?? 0) * bitcoin).toFixed(2),
     },
     { title: "Saldo", value: Number(user?.sale).toFixed(2) },
-    { title: "Quantidade", amount: Number(user?.bitcoin).toFixed(2) },
+    { title: "Quantidade", amount: Number(user?.bitcoin ?? 0).toFixed(2) },
   ];
 
   const dataBrita = [
@@ -328,7 +334,7 @@ export const WalletComponent = () => {
     },
     { title: "Total em Brita", value: ((user?.brita ?? 0) * brita).toFixed(2) },
     { title: "Saldo", value: Number(user?.sale).toFixed(2) },
-    { title: "Quantidade", amount: Number(user?.brita).toFixed(2) },
+    { title: "Quantidade", amount: Number(user?.brita ?? 0).toFixed(2) },
   ];
 
   const formModalBitcoin = [
@@ -593,10 +599,20 @@ export const WalletComponent = () => {
     }
 
     const amount = totalBuy / totalCoin;
+    const amountBuy = totalBuy / coinBuyWith;
 
     if (amount < 0.1) {
       setLoading({ data: false, chart: false, orders: false, form: false });
       setErrorMessage("Quantidade insuficiente! Quantidade mínima de 0.1.");
+      return;
+    }
+
+    if (
+      coinAmountWith &&
+      (coinAmountWith === 0 || coinAmountWith < Number(amount.toFixed(2)))
+    ) {
+      setLoading({ data: false, chart: false, orders: false, form: false });
+      setErrorMessage("Quantidade insuficiente!");
       return;
     }
 
@@ -606,17 +622,17 @@ export const WalletComponent = () => {
         coin: title,
         dateHour: dateNow(),
         operation: "buy",
-        total: amount * coinValue,
+        total: amountBuy * coinBuyWith,
       },
     ];
 
     const orderWith = [
       {
-        amount: Number(amount).toFixed(2),
+        amount: Number(amountBuy).toFixed(2),
         coin: titleWith,
         dateHour: dateNow(),
         operation: "sell",
-        total: amount * coinBuyWith,
+        total: amountBuy * coinBuyWith,
       },
     ];
 
@@ -629,19 +645,19 @@ export const WalletComponent = () => {
           Number(coinAmount ?? 0) + Number(formData.amount)
         ),
         [titleWith.toLocaleLowerCase()]: Number(
-          ((coinAmountWith ?? 0) - amount).toFixed(2)
+          ((coinAmountWith ?? 0) - amountBuy).toFixed(2)
         ),
       })
       .then(() =>
         firebaseRef
           .database()
-          .ref("users" + userId + "/orders")
+          .ref("users/" + userId + "/orders")
           .push(order)
       )
       .then(() => {
         firebaseRef
           .database()
-          .ref("users" + userId + "/orders")
+          .ref("users/" + userId + "/orders")
           .push(orderWith);
         message.success("Compra realizada com sucesso!");
       })

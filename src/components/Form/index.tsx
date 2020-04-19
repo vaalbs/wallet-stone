@@ -31,7 +31,7 @@ export const Form = (props: IFormModal) => {
   const totalBuy = values * (props.coinValue ? props.coinValue : 0);
   const totalBitcoin =
     (props.coinBuyWith ?? 0) * (props.coinBuyWithAmount ?? 0);
-  const bitcoinAmount = Number(totalBuy) / totalBitcoin;
+  const bitcoinAmount = Number(totalBuy) / (props.coinBuyWith ?? 0);
 
   return (
     <Modal
