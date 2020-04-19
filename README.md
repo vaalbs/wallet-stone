@@ -15,6 +15,10 @@ Sobre as operações financeiras de criptomoedas, é correto afirmar que:
 
 Além disso, são exibidos gráficos do mês anterior e do antepenúltimo mês tendo como o eixo X os dias do mês e o eixo Y os valores de compra. Os gráficos da Brita estão vindo sem os finais de semana por não terem valores nesses dias.
 
+### Inconsistências
+
+Durante a produção do projeto a API da Brita apresentou instabilidades, dito isso, quando a API dá erro o valor da Brita será de R\$4,50.
+
 ## Como iniciar o projeto
 
 1. Clone o repo: git clone https://github.com/vaalbs/wallet-stone.git

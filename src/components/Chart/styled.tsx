@@ -7,3 +7,7 @@ export const Tab = styled(TabWrapper)`
   margin-top: 28px;
   text-align: right;
 `;
+
+export const Paragraph = styled.p`
+  text-align: center;
+`;

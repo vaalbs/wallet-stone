@@ -2,7 +2,7 @@ import Chart from "chart.js";
 import React from "react";
 import { TabPaneWrapper } from "../../styles/Antd/Tab/styled";
 import { Loading } from "../Loading";
-import { ChartWrapper, Tab } from "./styled";
+import { ChartWrapper, Paragraph, Tab } from "./styled";
 
 export interface IChart {
   labels?: number[];
@@ -57,10 +57,14 @@ export const ChartComponent = (props: IProps) => {
             key={`${index}`}
             forceRender={true}
           >
-            {!chart.loading ? (
-              <canvas height="80px" id={`${index}`} ref={chart.reference} />
+            {chart.data ? (
+              !chart.loading ? (
+                <canvas height="80px" id={`${index}`} ref={chart.reference} />
+              ) : (
+                <Loading />
+              )
             ) : (
-              <Loading />
+              <Paragraph>Nenhum dado encontrado.</Paragraph>
             )}
           </TabPaneWrapper>
         ))}
