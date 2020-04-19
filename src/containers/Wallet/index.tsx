@@ -32,7 +32,7 @@ interface ILoading {
 }
 
 export const WalletComponent = () => {
-  var userId = firebaseRef.auth().currentUser?.uid;
+  const userId = firebaseRef.auth().currentUser?.uid;
 
   const lastMonth = React.createRef<HTMLCanvasElement>();
   const antepenultimateDays = React.createRef<HTMLCanvasElement>();
