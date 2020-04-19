@@ -35,3 +35,4 @@ Durante a produção do projeto a API da Brita apresentou instabilidades, dito i
 - Typescript
 - Styled components
 - Ant Design
+- Firebase
