@@ -7,6 +7,8 @@ Projeto de carteiras virtuais de criptomoedas. Foram utilizadas duas criptomoeda
 
 Sobre as operações financeiras de criptomoedas, é correto afirmar que:
 
+- Todo cliente ao se cadastrar recebe R\$ 100.000,00 (cem mil reais) em conta para comprar Bitcoins e Britas.
+
 - O cliente pode vender suas criptomoedas ou trocar uma pela outra.
 
 - O cliente precisa saber o saldo discriminado por cada moeda.
