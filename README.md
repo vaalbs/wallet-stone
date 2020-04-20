@@ -24,7 +24,7 @@ Durante o desenvolvimento do projeto a API da Brita apresentou instabilidades, d
 ## Como iniciar o projeto
 
 1. Clone o repositório: git clone https://github.com/vaalbs/wallet-stone.git
-2. cd no repositório: cd wallet-stone
+2. Acesse a pasta: cd wallet-stone
 3. Instale as dependências (use npm): npm i
 4. Rode a aplicação: npm start
 5. Abra [http://localhost:3000](http://localhost:3000) para visuliazar no browser
