@@ -34,9 +34,11 @@ interface ILoading {
 export const WalletComponent = () => {
   const userId = firebaseRef.auth().currentUser?.uid;
 
+  // graficos
   const lastMonth = React.createRef<HTMLCanvasElement>();
-  const antepenultimateDays = React.createRef<HTMLCanvasElement>();
+  const penultimateDays = React.createRef<HTMLCanvasElement>();
 
+  // dias do ultimo mes
   const [lastMonthDaysBrita, setLastMonthDaysBrita] = React.useState<
     number[]
   >();
@@ -44,23 +46,26 @@ export const WalletComponent = () => {
     number[]
   >();
 
+  // dias no penultimo mes
   const [
-    antepenultimateMonthDaysBrita,
-    setAntepenultimateMonthDaysBrita,
+    penultimateMonthDaysBrita,
+    setPenultimateMonthDaysBrita,
   ] = React.useState<number[]>();
   const [
-    antepenultimateMonthDaysBitcoin,
-    setAntepenultimateMonthDaysBitcoin,
+    penultimateMonthDaysBitcoin,
+    setPenultimateMonthDaysBitcoin,
   ] = React.useState<number[]>();
 
-  const [antepenultimateMonth, setAntepenultimateMonth] = React.useState("");
+  // nome do penultimo mes
+  const [penultimateMonth, setPenultimateMonth] = React.useState("");
 
+  // dados do grafico
   const [lastMonthChartDataBrita, setLastMonthChartDataBrita] = React.useState<
     number[]
   >();
   const [
-    antepenultimateMonthChartDataBrita,
-    setAntepenultimateMonthChartDataBrita,
+    penultimateMonthChartDataBrita,
+    setPenultimateMonthChartDataBrita,
   ] = React.useState<number[]>();
 
   const [
@@ -68,10 +73,11 @@ export const WalletComponent = () => {
     setLastMonthChartDataBitcoin,
   ] = React.useState<number[]>();
   const [
-    antepenultimateMonthChartDataBitcoin,
-    setAntepenultimateMonthChartDataBitcoin,
+    penultimateMonthChartDataBitcoin,
+    setPenultimateMonthChartDataBitcoin,
   ] = React.useState<number[]>();
 
+  // acoes do modal
   const [showOnBuyBitcoin, setShowOnBuyBitcoin] = React.useState(false);
   const [showOnBuyBrita, setShowOnBuyBrita] = React.useState(false);
 
@@ -110,20 +116,16 @@ export const WalletComponent = () => {
     getDays(1, setLastMonthDaysBrita, setLastMonthDaysBitcoin);
     getCoinsByDate(0, setLastMonthChartDataBrita, setLastMonthChartDataBitcoin);
 
-    getMonth(setAntepenultimateMonth);
+    getMonth(setPenultimateMonth);
   }, []);
 
   React.useEffect(() => {
     // penultimo mes
-    getDays(
-      2,
-      setAntepenultimateMonthDaysBrita,
-      setAntepenultimateMonthDaysBitcoin
-    );
+    getDays(2, setPenultimateMonthDaysBrita, setPenultimateMonthDaysBitcoin);
     getCoinsByDate(
       1,
-      setAntepenultimateMonthChartDataBrita,
-      setAntepenultimateMonthChartDataBitcoin
+      setPenultimateMonthChartDataBrita,
+      setPenultimateMonthChartDataBitcoin
     );
   }, []);
 
@@ -144,6 +146,7 @@ export const WalletComponent = () => {
     }
   };
 
+  // pega o valor do dia
   const getCoins = () => {
     const initialDateBrita = dateBrita(0);
     const finalDateBrita = dateBrita(2);
@@ -173,6 +176,7 @@ export const WalletComponent = () => {
       });
   };
 
+  // pega os valores do mes
   const getCoinsByDate = (
     month: number,
     setDataByDateBrita: (
@@ -283,10 +287,10 @@ export const WalletComponent = () => {
       loading: loading.chart,
     },
     {
-      labels: antepenultimateMonthDaysBitcoin,
-      data: antepenultimateMonthChartDataBitcoin,
-      tabTitle: antepenultimateMonth,
-      reference: antepenultimateDays,
+      labels: penultimateMonthDaysBitcoin,
+      data: penultimateMonthChartDataBitcoin,
+      tabTitle: penultimateMonth,
+      reference: penultimateDays,
       loading: loading.chart,
     },
   ];
@@ -300,10 +304,10 @@ export const WalletComponent = () => {
       loading: loading.chart,
     },
     {
-      labels: antepenultimateMonthDaysBrita,
-      data: antepenultimateMonthChartDataBrita,
-      tabTitle: antepenultimateMonth,
-      reference: antepenultimateDays,
+      labels: penultimateMonthDaysBrita,
+      data: penultimateMonthChartDataBrita,
+      tabTitle: penultimateMonth,
+      reference: penultimateDays,
       loading: loading.chart,
     },
   ];
