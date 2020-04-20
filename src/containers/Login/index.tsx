@@ -55,7 +55,7 @@ export const Login = (props: IProps) => {
       <Title>Acesse sua conta para ver sua carteira</Title>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Row>
-          <Label>Login</Label>
+          <Label>E-mail</Label>
           <InputWrapper
             name="login"
             type="email"

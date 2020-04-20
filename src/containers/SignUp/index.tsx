@@ -64,7 +64,7 @@ export const SignUp = (props: IProps) => {
       <Title>Cadastre-se para criar sua carteira</Title>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Row>
-          <Label>Login</Label>
+          <Label>E-mails</Label>
           <InputWrapper
             name="login"
             type="email"
