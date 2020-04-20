@@ -15,7 +15,7 @@ Sobre as operações financeiras de criptomoedas, é correto afirmar que:
 
 - O cliente precisa ter um extrato de operações financeiras.
 
-Além disso, são exibidos gráficos do mês anterior e do antepenúltimo mês tendo como o eixo X os dias do mês e o eixo Y os valores de compra. Os gráficos da Brita estão vindo sem os finais de semana por não terem valores nesses dias.
+Além disso, são exibidos gráficos do mês anterior e do penúltimo mês tendo como o eixo X os dias do mês e o eixo Y os valores de compra. Os gráficos da Brita estão vindo sem os finais de semana por não terem valores nesses dias.
 
 ### Inconsistências
 
