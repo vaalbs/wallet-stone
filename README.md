@@ -19,7 +19,7 @@ Além disso, são exibidos gráficos do mês anterior e do penúltimo mês tendo
 
 ### Inconsistências
 
-Durante a produção do projeto a API da Brita apresentou instabilidades, dito isso, quando a API dá erro o valor da Brita será de R\$4,50.
+Durante o desenvolvimento do projeto a API da Brita apresentou instabilidades, dito isso, quando a API dá erro o valor da Brita será de R\$4,50.
 
 ## Como iniciar o projeto
 
